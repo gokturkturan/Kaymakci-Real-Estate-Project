@@ -1,0 +1,453 @@
+@extends('layouts.app')
+
+@section('title', $property->title . ' | ' . $property->bedrooms . ' Zimmer ' . $property->area . 'm² in ' . $property->location . ' | Kaymakci Real Estate GmbH')
+
+@section('meta_description', $property->title . ' zu verkaufen in ' . $property->location . '. ' . $property->bedrooms . ' Zimmer, ' . $property->bathrooms . ' Bad, ' . $property->area . ' m² für ' . number_format($property->price, 0, ',', '.') . ' €. ' . Str::limit($property->description, 100))
+
+@section('meta_keywords', $property->title . ', ' . $property->location . ', Immobilie kaufen, ' . $property->bedrooms . ' Zimmer Wohnung, Kaymakci Real Estate GmbH')
+
+@section('og_type', 'product')
+@section('og_title', $property->title . ' - ' . number_format($property->price, 0, ',', '.') . ' € | Kaymakci Real Estate GmbH')
+@section('og_description', $property->bedrooms . ' Zimmer, ' . $property->bathrooms . ' Bad, ' . $property->area . ' m² in ' . $property->location)
+@section('og_image', $property->first_image ?? asset('images/og-default.jpg'))
+@section('twitter_image', $property->first_image ?? asset('images/og-default.jpg'))
+
+@section('structured_data')
+@php
+$realEstateListing = [
+    '@context' => 'https://schema.org',
+    '@type' => 'RealEstateListing',
+    'name' => $property->title,
+    'description' => $property->description,
+    'url' => route('properties.show', $property),
+    'datePosted' => $property->created_at->toIso8601String(),
+    'offers' => [
+        '@type' => 'Offer',
+        'price' => $property->price,
+        'priceCurrency' => 'EUR',
+        'availability' => 'https://schema.org/InStock'
+    ],
+    'address' => [
+        '@type' => 'PostalAddress',
+        'addressLocality' => $property->location,
+        'addressCountry' => 'DE'
+    ],
+    'floorSize' => [
+        '@type' => 'QuantitativeValue',
+        'value' => $property->area,
+        'unitCode' => 'MTK'
+    ],
+    'numberOfRooms' => $property->bedrooms,
+    'numberOfBathroomsTotal' => $property->bathrooms
+];
+if ($property->images->count() > 0) {
+    $realEstateListing['image'] = $property->images->pluck('url')->toArray();
+}
+
+$breadcrumb = [
+    '@context' => 'https://schema.org',
+    '@type' => 'BreadcrumbList',
+    'itemListElement' => [
+        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Startseite', 'item' => url('/')],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Immobilienangebote', 'item' => route('properties.index')],
+        ['@type' => 'ListItem', 'position' => 3, 'name' => $property->title, 'item' => route('properties.show', $property)]
+    ]
+];
+
+$product = [
+    '@context' => 'https://schema.org',
+    '@type' => 'Product',
+    'name' => $property->title,
+    'description' => Str::limit($property->description, 200),
+    'brand' => ['@type' => 'Brand', 'name' => 'Kaymakci Real Estate GmbH'],
+    'offers' => [
+        '@type' => 'Offer',
+        'url' => route('properties.show', $property),
+        'priceCurrency' => 'EUR',
+        'price' => $property->price,
+        'availability' => 'https://schema.org/InStock',
+        'seller' => ['@type' => 'RealEstateAgent', 'name' => 'Kaymakci Real Estate GmbH']
+    ]
+];
+if ($property->first_image) {
+    $product['image'] = $property->first_image;
+}
+@endphp
+<script type="application/ld+json">{!! json_encode($realEstateListing, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+<script type="application/ld+json">{!! json_encode($breadcrumb, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+<script type="application/ld+json">{!! json_encode($product, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+@endsection
+
+@section('content')
+    <article class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10" itemscope itemtype="https://schema.org/RealEstateListing">
+
+        <nav class="mb-6" aria-label="Breadcrumb">
+            <ol class="flex items-center gap-2 text-sm text-gray-500">
+                <li><a href="{{ route('properties.index') }}" class="hover:text-blue-600 transition">Startseite</a></li>
+                <li><span aria-hidden="true">/</span></li>
+                <li><a href="{{ route('properties.index') }}" class="hover:text-blue-600 transition">Angebote</a></li>
+                <li><span aria-hidden="true">/</span></li>
+                <li class="text-gray-900 font-medium" aria-current="page">{{ Str::limit($property->title, 30) }}</li>
+            </ol>
+        </nav>
+
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            {{-- Image Gallery --}}
+            @if($property->images->count() > 0)
+                <div class="relative" x-data="{ currentSlide: 0, totalSlides: {{ $property->images->count() }} }">
+                    {{-- Main Image --}}
+                    <div class="aspect-video bg-gray-200 overflow-hidden relative">
+                        @foreach($property->images as $index => $image)
+                            <img src="{{ $image->url }}"
+                                 alt="{{ $property->title }} - Bild {{ $index + 1 }}"
+                                 class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+                                 :class="currentSlide === {{ $index }} ? 'opacity-100' : 'opacity-0'"
+                                 @if($index === 0) itemprop="image" @endif>
+                        @endforeach
+
+                        {{-- Navigation Arrows --}}
+                        @if($property->images->count() > 1)
+                            <button @click="currentSlide = (currentSlide - 1 + totalSlides) % totalSlides"
+                                    class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition"
+                                    aria-label="Vorheriges Bild">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                </svg>
+                            </button>
+                            <button @click="currentSlide = (currentSlide + 1) % totalSlides"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition"
+                                    aria-label="Nächstes Bild">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </button>
+
+                            {{-- Counter --}}
+                            <div class="absolute bottom-4 right-4 bg-black/60 text-white text-sm px-3 py-1 rounded-full">
+                                <span x-text="currentSlide + 1"></span> / {{ $property->images->count() }}
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- Thumbnail Navigation --}}
+                    @if($property->images->count() > 1)
+                        <div class="flex gap-2 p-4 bg-gray-100 overflow-x-auto">
+                            @foreach($property->images as $index => $image)
+                                <button @click="currentSlide = {{ $index }}"
+                                        class="flex-shrink-0 w-20 h-14 rounded overflow-hidden border-2 transition"
+                                        :class="currentSlide === {{ $index }} ? 'border-blue-600' : 'border-transparent hover:border-gray-300'">
+                                    <img src="{{ $image->url }}" alt="Thumbnail {{ $index + 1 }}" class="w-full h-full object-cover">
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            @else
+                <figure class="aspect-video bg-gray-200 overflow-hidden">
+                    <div class="w-full h-full flex items-center justify-center text-gray-400" aria-label="Kein Bild verfügbar">
+                        <svg class="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 22V12h6v10"/>
+                        </svg>
+                    </div>
+                </figure>
+            @endif
+
+            <div class="p-8">
+                <header class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900" itemprop="name">{{ $property->title }}</h1>
+                        <p class="text-gray-500 mt-1" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+                            <span itemprop="addressLocality">{{ $property->location }}</span>
+                        </p>
+                    </div>
+                    <p class="text-3xl font-bold text-blue-600 whitespace-nowrap" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                        <span itemprop="price" content="{{ $property->price }}">{{ number_format($property->price, 0, ',', '.') }}</span>
+                        <span itemprop="priceCurrency" content="EUR">€</span>
+                        <meta itemprop="availability" content="https://schema.org/InStock">
+                    </p>
+                </header>
+
+                <section class="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg mb-8" aria-label="Immobilien-Eigenschaften">
+                    <div class="text-center">
+                        <p class="text-2xl font-bold text-gray-900" itemprop="numberOfRooms">{{ $property->bedrooms }}</p>
+                        <p class="text-sm text-gray-500">Zimmer</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-2xl font-bold text-gray-900" itemprop="numberOfBathroomsTotal">{{ $property->bathrooms }}</p>
+                        <p class="text-sm text-gray-500">Bad</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-2xl font-bold text-gray-900">{{ $property->area }}</p>
+                        <p class="text-sm text-gray-500">m²</p>
+                        <meta itemprop="floorSize" content="{{ $property->area }} MTK">
+                    </div>
+                </section>
+
+                <section aria-labelledby="description-title">
+                    <h2 id="description-title" class="text-xl font-semibold text-gray-900 mb-3">Objektbeschreibung</h2>
+                    <div class="text-gray-600 leading-relaxed whitespace-pre-line" itemprop="description">{{ $property->description }}</div>
+                </section>
+
+                {{-- Booking Section --}}
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+                <style>
+                    .flatpickr-day.booked {
+                        background: #dc2626 !important;
+                        color: white !important;
+                        text-decoration: line-through;
+                        cursor: not-allowed !important;
+                    }
+                    .flatpickr-day.booked:hover {
+                        background: #b91c1c !important;
+                    }
+                    .flatpickr-day.selected {
+                        background: #2563eb !important;
+                        border-color: #2563eb !important;
+                    }
+                    .flatpickr-day.inRange {
+                        background: #bfdbfe !important;
+                        border-color: #bfdbfe !important;
+                    }
+                </style>
+                <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+                <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>
+                <script>
+                function bookingForm() {
+                    return {
+                        checkIn: '',
+                        checkOut: '',
+                        bookedDates: [],
+                        dateError: '',
+                        nights: 0,
+                        loading: false,
+                        isValid: false,
+                        checkInPicker: null,
+                        checkOutPicker: null,
+
+                        async init() {
+                            await this.fetchBookedDates();
+                            this.initDatePickers();
+                        },
+
+                        async fetchBookedDates() {
+                            try {
+                                const response = await fetch('/immobilie/{{ $property->id }}/buchungen');
+                                const data = await response.json();
+                                this.bookedDates = data.booked_dates || [];
+                            } catch (error) {
+                                console.error('Error fetching booked dates:', error);
+                                this.bookedDates = [];
+                            }
+                        },
+
+                        initDatePickers() {
+                            const self = this;
+                            const today = new Date().toISOString().split('T')[0];
+
+                            this.checkInPicker = flatpickr('#check_in', {
+                                locale: 'de',
+                                dateFormat: 'Y-m-d',
+                                minDate: today,
+                                disable: this.bookedDates,
+                                onDayCreate: function(dObj, dStr, fp, dayElem) {
+                                    const dateStr = dayElem.dateObj.toISOString().split('T')[0];
+                                    if (self.bookedDates.includes(dateStr)) {
+                                        dayElem.classList.add('booked');
+                                    }
+                                },
+                                onChange: function(selectedDates, dateStr) {
+                                    self.checkIn = dateStr;
+                                    if (self.checkOutPicker) {
+                                        self.checkOutPicker.set('minDate', dateStr);
+                                    }
+                                    self.validateDates();
+                                }
+                            });
+
+                            this.checkOutPicker = flatpickr('#check_out', {
+                                locale: 'de',
+                                dateFormat: 'Y-m-d',
+                                minDate: today,
+                                disable: this.bookedDates,
+                                onDayCreate: function(dObj, dStr, fp, dayElem) {
+                                    const dateStr = dayElem.dateObj.toISOString().split('T')[0];
+                                    if (self.bookedDates.includes(dateStr)) {
+                                        dayElem.classList.add('booked');
+                                    }
+                                },
+                                onChange: function(selectedDates, dateStr) {
+                                    self.checkOut = dateStr;
+                                    self.validateDates();
+                                }
+                            });
+                        },
+
+                        validateDates() {
+                            this.dateError = '';
+                            this.nights = 0;
+                            this.isValid = false;
+
+                            if (!this.checkIn || !this.checkOut) return;
+
+                            const checkInDate = new Date(this.checkIn);
+                            const checkOutDate = new Date(this.checkOut);
+
+                            if (checkOutDate <= checkInDate) {
+                                this.dateError = 'Check-out muss nach Check-in liegen.';
+                                return;
+                            }
+
+                            // Calculate nights
+                            const diffTime = Math.abs(checkOutDate - checkInDate);
+                            this.nights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                            // Check for conflicts with booked dates
+                            const current = new Date(this.checkIn);
+                            while (current < checkOutDate) {
+                                const dateStr = current.toISOString().split('T')[0];
+                                if (this.bookedDates.includes(dateStr)) {
+                                    this.dateError = 'Die gewählten Daten überschneiden sich mit einer bestehenden Buchung.';
+                                    return;
+                                }
+                                current.setDate(current.getDate() + 1);
+                            }
+
+                            // All validations passed
+                            this.isValid = true;
+                        }
+                    }
+                }
+                </script>
+                <section class="mt-8 p-6 bg-blue-50 rounded-lg" aria-label="Buchung" x-data="bookingForm()">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Aufenthalt buchen</h3>
+                    <p class="text-gray-600 mb-4">Wählen Sie Ihren gewünschten Zeitraum für diese Immobilie.</p>
+
+                    @if(session('success'))
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                    <form action="{{ route('bookings.store', $property) }}" method="POST" class="space-y-4">
+                        @csrf
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {{-- Check-in Date --}}
+                            <div>
+                                <label for="check_in" class="block text-sm font-medium text-gray-700 mb-1">Check-in *</label>
+                                <input type="text" id="check_in" name="check_in" required readonly
+                                       placeholder="Datum wählen"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white cursor-pointer">
+                                @error('check_in')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Check-out Date --}}
+                            <div>
+                                <label for="check_out" class="block text-sm font-medium text-gray-700 mb-1">Check-out *</label>
+                                <input type="text" id="check_out" name="check_out" required readonly
+                                       placeholder="Datum wählen"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white cursor-pointer">
+                                @error('check_out')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- Date validation message --}}
+                        <div x-show="dateError" x-cloak class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+                            <p x-text="dateError"></p>
+                        </div>
+
+                        {{-- Nights info --}}
+                        <div x-show="nights > 0 && !dateError" x-cloak class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
+                            <p><span x-text="nights"></span> Nacht/Nächte ausgewählt</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {{-- Name --}}
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                                <input type="text" id="name" name="name" required value="{{ old('name') }}"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                       placeholder="Ihr vollständiger Name">
+                                @error('name')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Email --}}
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-Mail *</label>
+                                <input type="email" id="email" name="email" required value="{{ old('email') }}"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                       placeholder="ihre@email.de">
+                                @error('email')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {{-- Phone --}}
+                            <div>
+                                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Telefon (optional)</label>
+                                <input type="tel" id="phone" name="phone" value="{{ old('phone') }}"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                       placeholder="Ihre Telefonnummer">
+                                @error('phone')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Guests --}}
+                            <div>
+                                <label for="guests" class="block text-sm font-medium text-gray-700 mb-1">Anzahl Gäste *</label>
+                                <select id="guests" name="guests" required
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    @for($i = 1; $i <= 10; $i++)
+                                        <option value="{{ $i }}" {{ old('guests', 1) == $i ? 'selected' : '' }}>{{ $i }} {{ $i === 1 ? 'Gast' : 'Gäste' }}</option>
+                                    @endfor
+                                </select>
+                                @error('guests')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- Message --}}
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Nachricht (optional)</label>
+                            <textarea id="message" name="message" rows="3"
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                      placeholder="Haben Sie besondere Wünsche oder Fragen?">{{ old('message') }}</textarea>
+                            @error('message')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <button type="submit"
+                                :disabled="!isValid"
+                                class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
+                            Buchungsanfrage senden
+                        </button>
+                    </form>
+
+                    <p class="text-sm text-gray-500 mt-4">
+                        * Nach Ihrer Anfrage erhalten Sie eine Bestätigung per E-Mail, sobald die Buchung von uns geprüft wurde.
+                    </p>
+                </section>
+            </div>
+        </div>
+
+        <meta itemprop="datePosted" content="{{ $property->created_at->toIso8601String() }}">
+    </article>
+@endsection

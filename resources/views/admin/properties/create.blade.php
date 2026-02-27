@@ -1,0 +1,124 @@
+@extends('admin.layouts.app')
+
+@section('title', 'Neue Immobilie')
+@section('header', 'Neue Immobilie hinzufügen')
+
+@section('content')
+    <div class="max-w-4xl">
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            @if($errors->any())
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+                    <ul class="list-disc list-inside">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{ route('admin.properties.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                @csrf
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Titel *</label>
+                        <input type="text" id="title" name="title" required value="{{ old('title') }}"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="z.B. Villa mit Seeblick">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Beschreibung *</label>
+                        <textarea id="description" name="description" rows="5" required
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  placeholder="Ausführliche Beschreibung der Immobilie...">{{ old('description') }}</textarea>
+                    </div>
+
+                    <div>
+                        <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Preis (EUR) *</label>
+                        <input type="number" id="price" name="price" required value="{{ old('price') }}" min="0" step="1000"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="z.B. 450000">
+                    </div>
+
+                    <div>
+                        <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Standort *</label>
+                        <input type="text" id="location" name="location" required value="{{ old('location') }}"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="z.B. Frankfurt am Main">
+                    </div>
+
+                    <div>
+                        <label for="bedrooms" class="block text-sm font-medium text-gray-700 mb-1">Zimmer *</label>
+                        <input type="number" id="bedrooms" name="bedrooms" required value="{{ old('bedrooms') }}" min="0"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="z.B. 4">
+                    </div>
+
+                    <div>
+                        <label for="bathrooms" class="block text-sm font-medium text-gray-700 mb-1">Badezimmer *</label>
+                        <input type="number" id="bathrooms" name="bathrooms" required value="{{ old('bathrooms') }}" min="0"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="z.B. 2">
+                    </div>
+
+                    <div>
+                        <label for="area" class="block text-sm font-medium text-gray-700 mb-1">Fläche (m²) *</label>
+                        <input type="number" id="area" name="area" required value="{{ old('area') }}" min="0" step="0.5"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="z.B. 150">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label for="images" class="block text-sm font-medium text-gray-700 mb-1">Bilder</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition cursor-pointer"
+                             onclick="document.getElementById('images').click()">
+                            <svg class="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            <p class="text-gray-600">Klicken Sie hier oder ziehen Sie Bilder hierher</p>
+                            <p class="text-sm text-gray-400 mt-1">JPEG, PNG, WebP (max. 5MB pro Bild)</p>
+                            <input type="file" id="images" name="images[]" multiple accept="image/*" class="hidden"
+                                   onchange="previewImages(this)">
+                        </div>
+                        <div id="image-preview" class="grid grid-cols-4 gap-4 mt-4"></div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-4 pt-4 border-t">
+                    <a href="{{ route('admin.properties.index') }}"
+                       class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                        Abbrechen
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        Immobilie erstellen
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function previewImages(input) {
+            const preview = document.getElementById('image-preview');
+            preview.innerHTML = '';
+
+            if (input.files) {
+                Array.from(input.files).forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const div = document.createElement('div');
+                        div.className = 'relative';
+                        div.innerHTML = `
+                            <img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg">
+                            <span class="absolute bottom-1 right-1 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">${index + 1}</span>
+                        `;
+                        preview.appendChild(div);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+    </script>
+@endsection
