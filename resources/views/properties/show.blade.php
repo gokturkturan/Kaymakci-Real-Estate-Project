@@ -2,12 +2,12 @@
 
 @section('title', $property->title . ' | ' . $property->bedrooms . ' Zimmer ' . $property->area . 'm² in ' . $property->location . ' | Kaymakci Real Estate GmbH')
 
-@section('meta_description', $property->title . ' zu verkaufen in ' . $property->location . '. ' . $property->bedrooms . ' Zimmer, ' . $property->bathrooms . ' Bad, ' . $property->area . ' m² für ' . number_format($property->price, 0, ',', '.') . ' €. ' . Str::limit($property->description, 100))
+@section('meta_description', $property->title . ' zur möblierten Vermietung in ' . $property->location . '. ' . $property->bedrooms . ' Zimmer, ' . $property->bathrooms . ' Bad, ' . $property->area . ' m² ab ' . number_format($property->price, 2, ',', '.') . ' € pro Person und Nacht. ' . Str::limit($property->description, 100))
 
-@section('meta_keywords', $property->title . ', ' . $property->location . ', Immobilie kaufen, ' . $property->bedrooms . ' Zimmer Wohnung, Kaymakci Real Estate GmbH')
+@section('meta_keywords', $property->title . ', ' . $property->location . ', möblierte Wohnung mieten, Wohnen auf Zeit, ' . $property->bedrooms . ' Zimmer Wohnung, Kaymakci Real Estate GmbH')
 
 @section('og_type', 'product')
-@section('og_title', $property->title . ' - ' . number_format($property->price, 0, ',', '.') . ' € | Kaymakci Real Estate GmbH')
+@section('og_title', $property->title . ' - ' . number_format($property->price, 2, ',', '.') . ' € pro Person/Nacht | Kaymakci Real Estate GmbH')
 @section('og_description', $property->bedrooms . ' Zimmer, ' . $property->bathrooms . ' Bad, ' . $property->area . ' m² in ' . $property->location)
 @section('og_image', $property->first_image ?? asset('images/og-default.jpg'))
 @section('twitter_image', $property->first_image ?? asset('images/og-default.jpg'))
@@ -25,6 +25,12 @@ $realEstateListing = [
         '@type' => 'Offer',
         'price' => $property->price,
         'priceCurrency' => 'EUR',
+        'priceSpecification' => [
+            '@type' => 'UnitPriceSpecification',
+            'price' => $property->price,
+            'priceCurrency' => 'EUR',
+            'unitText' => 'Person pro Nacht'
+        ],
         'availability' => 'https://schema.org/InStock'
     ],
     'address' => [
@@ -65,6 +71,12 @@ $product = [
         'url' => route('properties.show', $property),
         'priceCurrency' => 'EUR',
         'price' => $property->price,
+        'priceSpecification' => [
+            '@type' => 'UnitPriceSpecification',
+            'price' => $property->price,
+            'priceCurrency' => 'EUR',
+            'unitText' => 'Person pro Nacht'
+        ],
         'availability' => 'https://schema.org/InStock',
         'seller' => ['@type' => 'RealEstateAgent', 'name' => 'Kaymakci Real Estate GmbH']
     ]
@@ -162,8 +174,9 @@ if ($property->first_image) {
                         </p>
                     </div>
                     <p class="text-3xl font-bold text-blue-600 whitespace-nowrap" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
-                        <span itemprop="price" content="{{ $property->price }}">{{ number_format($property->price, 0, ',', '.') }}</span>
+                        <span itemprop="price" content="{{ $property->price }}">{{ number_format($property->price, 2, ',', '.') }}</span>
                         <span itemprop="priceCurrency" content="EUR">€</span>
+                        <span class="block text-sm font-medium text-gray-500">pro Person / Nacht</span>
                         <meta itemprop="availability" content="https://schema.org/InStock">
                     </p>
                 </header>
@@ -188,6 +201,34 @@ if ($property->first_image) {
                     <h2 id="description-title" class="text-xl font-semibold text-gray-900 mb-3">Objektbeschreibung</h2>
                     <div class="text-gray-600 leading-relaxed whitespace-pre-line" itemprop="description">{{ $property->description }}</div>
                 </section>
+
+                @if($property->latitude !== null && $property->longitude !== null)
+                    <section class="mt-8" aria-labelledby="map-title">
+                        <h2 id="map-title" class="text-xl font-semibold text-gray-900 mb-3">Lage</h2>
+                        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+                        <div id="property-map" class="h-96 rounded-lg border border-gray-200" aria-label="Satellitenkarte: {{ $property->location }}"></div>
+                        <p class="text-xs text-gray-500 mt-2">Kartendaten: OpenStreetMap · Satellitenbilder: Esri</p>
+                        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const coordinates = [{{ (float) $property->latitude }}, {{ (float) $property->longitude }}];
+                                const map = L.map('property-map').setView(coordinates, 18);
+                                const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                                    attribution: 'Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
+                                });
+                                const streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                    maxZoom: 19,
+                                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                });
+
+                                satellite.addTo(map);
+                                streets.addTo(map);
+                                L.marker(coordinates).addTo(map).bindPopup(@js($property->location));
+                                L.control.layers({ Satellit: satellite, Karte: streets }).addTo(map);
+                            });
+                        </script>
+                    </section>
+                @endif
 
                 {{-- Booking Section --}}
                 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -220,10 +261,20 @@ if ($property->first_image) {
                         bookedDates: [],
                         dateError: '',
                         nights: 0,
+                        guests: {{ old('guests', 1) }},
+                        pricePerPersonPerNight: {{ (float) $property->price }},
                         loading: false,
                         isValid: false,
                         checkInPicker: null,
                         checkOutPicker: null,
+
+                        get totalPrice() {
+                            return this.nights * this.guests * this.pricePerPersonPerNight;
+                        },
+
+                        formatPrice(price) {
+                            return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price);
+                        },
 
                         async init() {
                             await this.fetchBookedDates();
@@ -370,6 +421,8 @@ if ($property->first_image) {
                         {{-- Nights info --}}
                         <div x-show="nights > 0 && !dateError" x-cloak class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
                             <p><span x-text="nights"></span> Nacht/Nächte ausgewählt</p>
+                            <p class="mt-1 font-semibold">Gesamtpreis: <span x-text="formatPrice(totalPrice)"></span></p>
+                            <p class="text-sm">{{ number_format($property->price, 2, ',', '.') }} € pro Person und Nacht</p>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -411,7 +464,7 @@ if ($property->first_image) {
                             {{-- Guests --}}
                             <div>
                                 <label for="guests" class="block text-sm font-medium text-gray-700 mb-1">Anzahl Gäste *</label>
-                                <select id="guests" name="guests" required
+                                <select id="guests" name="guests" required x-model.number="guests"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     @for($i = 1; $i <= 10; $i++)
                                         <option value="{{ $i }}" {{ old('guests', 1) == $i ? 'selected' : '' }}>{{ $i }} {{ $i === 1 ? 'Gast' : 'Gäste' }}</option>

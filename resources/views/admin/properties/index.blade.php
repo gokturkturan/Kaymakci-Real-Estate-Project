@@ -23,7 +23,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bild</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titel</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Standort</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Preis</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Preis pro Person / Nacht</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
                         <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aktionen</th>
                     </tr>
@@ -47,7 +47,7 @@
                                 <div class="text-sm text-gray-500">{{ $property->images->count() }} Bilder</div>
                             </td>
                             <td class="px-6 py-4 text-gray-600">{{ $property->location }}</td>
-                            <td class="px-6 py-4 font-semibold text-gray-900">{{ number_format($property->price, 0, ',', '.') }} &euro;</td>
+                            <td class="px-6 py-4 font-semibold text-gray-900">{{ number_format($property->price, 2, ',', '.') }} &euro; <span class="text-sm font-normal text-gray-500">/ Person/Nacht</span></td>
                             <td class="px-6 py-4 text-sm text-gray-600">
                                 {{ $property->bedrooms }} Zi. &middot; {{ $property->bathrooms }} Bad &middot; {{ $property->area }} m&sup2;
                             </td>

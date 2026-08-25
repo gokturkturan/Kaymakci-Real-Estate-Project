@@ -36,17 +36,18 @@
                     </div>
 
                     <div>
-                        <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Preis (EUR) *</label>
-                        <input type="number" id="price" name="price" required value="{{ old('price', $property->price) }}" min="0" step="1000"
+                        <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Preis pro Person / Nacht (EUR) *</label>
+                        <input type="number" id="price" name="price" required value="{{ old('price', $property->price) }}" min="0" step="0.01"
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                               placeholder="z.B. 450000">
+                               placeholder="z.B. 99,00">
                     </div>
 
                     <div>
                         <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Standort *</label>
                         <input type="text" id="location" name="location" required value="{{ old('location', $property->location) }}"
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                               placeholder="z.B. Frankfurt am Main">
+                               placeholder="z.B. Mainzer Landstraße 50, 60329 Frankfurt am Main">
+                        <p class="text-xs text-gray-500 mt-1">Adres değişirse harita konumu otomatik güncellenir.</p>
                     </div>
 
                     <div>
@@ -74,35 +75,26 @@
                     @if($property->images->count() > 0)
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Vorhandene Bilder ({{ $property->images->count() }})</label>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            <p class="text-sm text-gray-500 mb-3">Ziehen Sie die Bilder in die gewünschte Reihenfolge. Das erste Bild wird als Titelbild verwendet.</p>
+                            <div id="existing-image-order"></div>
+                            <div id="existing-images" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                                 @foreach($property->images as $image)
-                                    <div class="image-card relative rounded-lg overflow-hidden shadow-sm border border-gray-200 aspect-square cursor-pointer">
-                                        <img src="{{ $image->url }}" alt="Bild {{ $loop->iteration }}" class="w-full h-full object-cover">
-                                        <div class="image-overlay absolute inset-0 flex items-center justify-center bg-black/50">
-                                            <button type="button"
-                                                    onclick="deleteImage({{ $image->id }}, '{{ csrf_token() }}')"
-                                                    class="bg-red-600 text-white p-3 rounded-full hover:bg-red-700 hover:scale-110 transition-all duration-200 shadow-xl">
-                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                </svg>
-                                            </button>
+                                    <div class="existing-image-card relative rounded-lg overflow-hidden shadow-sm border border-gray-200 bg-gray-50 p-2 cursor-move"
+                                         data-image-id="{{ $image->id }}" draggable="true"
+                                         ondragstart="startExistingImageDrag(event, this)" ondragend="endExistingImageDrag(this)" ondragover="event.preventDefault()" ondrop="dropExistingImage(event, this)">
+                                        <div class="relative aspect-square">
+                                            <img src="{{ $image->url }}" alt="Bild {{ $loop->iteration }}" class="w-full h-full object-cover rounded-md">
+                                            <span class="image-position absolute top-2 left-2 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded">{{ $loop->first ? 'Titelbild' : 'Bild ' . $loop->iteration }}</span>
                                         </div>
-                                        <span class="absolute bottom-2 left-2 bg-black/60 text-white text-xs font-medium px-2 py-1 rounded z-10">
-                                            {{ $loop->iteration }}
-                                        </span>
+                                        <div class="flex gap-2 mt-2">
+                                            <button type="button" onclick="moveExistingImage(this.closest('.existing-image-card'), -1)" class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded hover:bg-white" title="Nach links verschieben">←</button>
+                                            <button type="button" onclick="moveExistingImage(this.closest('.existing-image-card'), 1)" class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded hover:bg-white" title="Nach rechts verschieben">→</button>
+                                            <button type="button" onclick="deleteImage({{ $image->id }}, '{{ csrf_token() }}')" class="px-2 py-1 text-sm text-red-600 border border-red-200 rounded hover:bg-red-50" title="Bild löschen">Löschen</button>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
                         </div>
-                        <style>
-                            .image-card .image-overlay {
-                                opacity: 0;
-                                transition: opacity 0.2s ease;
-                            }
-                            .image-card:hover .image-overlay {
-                                opacity: 1;
-                            }
-                        </style>
                     @endif
 
                     <!-- Add New Images -->
@@ -118,7 +110,7 @@
                             <input type="file" id="images" name="images[]" multiple accept="image/*" class="hidden"
                                    onchange="previewImages(this)">
                         </div>
-                        <div id="image-preview" class="grid grid-cols-4 gap-4 mt-4"></div>
+                        <div id="image-preview" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4"></div>
                     </div>
                 </div>
 
@@ -137,26 +129,111 @@
     </div>
 
     <script>
+        let selectedImages = [];
+        let draggedExistingImage = null;
+
+        function syncExistingImageOrder() {
+            const orderContainer = document.getElementById('existing-image-order');
+            const imageCards = document.querySelectorAll('#existing-images .existing-image-card');
+            if (!orderContainer) return;
+
+            orderContainer.innerHTML = '';
+            imageCards.forEach((card, index) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'image_order[]';
+                input.value = card.dataset.imageId;
+                orderContainer.appendChild(input);
+                card.querySelector('.image-position').textContent = index === 0 ? 'Titelbild' : `Bild ${index + 1}`;
+            });
+        }
+
+        function startExistingImageDrag(event, card) {
+            draggedExistingImage = card;
+            event.dataTransfer.effectAllowed = 'move';
+            card.classList.add('opacity-50');
+        }
+
+        function dropExistingImage(event, targetCard) {
+            event.preventDefault();
+            if (draggedExistingImage && draggedExistingImage !== targetCard) {
+                const cards = Array.from(targetCard.parentNode.children);
+                const sourceIndex = cards.indexOf(draggedExistingImage);
+                const targetIndex = cards.indexOf(targetCard);
+
+                targetCard.parentNode.insertBefore(
+                    draggedExistingImage,
+                    sourceIndex < targetIndex ? targetCard.nextElementSibling : targetCard
+                );
+                syncExistingImageOrder();
+            }
+            if (draggedExistingImage) draggedExistingImage.classList.remove('opacity-50');
+            draggedExistingImage = null;
+        }
+
+        function endExistingImageDrag(card) {
+            card.classList.remove('opacity-50');
+            draggedExistingImage = null;
+        }
+
+        function moveExistingImage(card, direction) {
+            const sibling = direction < 0 ? card.previousElementSibling : card.nextElementSibling;
+            if (!sibling) return;
+
+            card.parentNode.insertBefore(card, direction < 0 ? sibling : sibling.nextElementSibling);
+            syncExistingImageOrder();
+        }
+
         function previewImages(input) {
+            const existingImages = new Set(selectedImages.map(image => `${image.name}-${image.size}-${image.lastModified}`));
+            Array.from(input.files).forEach((image) => {
+                const imageKey = `${image.name}-${image.size}-${image.lastModified}`;
+                if (!existingImages.has(imageKey)) {
+                    selectedImages.push(image);
+                    existingImages.add(imageKey);
+                }
+            });
+            syncSelectedImageInput();
+            renderImagePreviews();
+        }
+
+        function removeSelectedImage(index) {
+            selectedImages.splice(index, 1);
+            syncSelectedImageInput();
+            renderImagePreviews();
+        }
+
+        function syncSelectedImageInput() {
+            const dataTransfer = new DataTransfer();
+            selectedImages.forEach((image) => dataTransfer.items.add(image));
+            document.getElementById('images').files = dataTransfer.files;
+        }
+
+        function renderImagePreviews() {
             const preview = document.getElementById('image-preview');
             preview.innerHTML = '';
 
-            if (input.files) {
-                Array.from(input.files).forEach((file, index) => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const div = document.createElement('div');
-                        div.className = 'relative';
-                        div.innerHTML = `
-                            <img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg">
-                            <span class="absolute bottom-1 right-1 bg-green-500 text-white text-xs px-2 py-1 rounded">Neu</span>
-                        `;
-                        preview.appendChild(div);
-                    };
-                    reader.readAsDataURL(file);
-                });
-            }
+            selectedImages.forEach((file, index) => {
+                const card = document.createElement('div');
+                card.className = 'relative rounded-lg border border-gray-200 bg-gray-50 p-2';
+
+                const image = document.createElement('img');
+                image.src = URL.createObjectURL(file);
+                image.alt = `Neue Bildvorschau ${index + 1}`;
+                image.className = 'w-full h-32 object-cover rounded-md';
+
+                const removeButton = document.createElement('button');
+                removeButton.type = 'button';
+                removeButton.className = 'w-full mt-2 px-2 py-1 text-sm text-red-600 border border-red-200 rounded hover:bg-red-50';
+                removeButton.textContent = 'Aus Auswahl entfernen';
+                removeButton.addEventListener('click', () => removeSelectedImage(index));
+
+                card.append(image, removeButton);
+                preview.appendChild(card);
+            });
         }
+
+        document.addEventListener('DOMContentLoaded', syncExistingImageOrder);
 
         function deleteImage(imageId, token) {
             if (!confirm('Bild wirklich löschen?')) {

@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Immobilien kaufen in Deutschland | Kaymakci Real Estate GmbH')
+@section('title', 'Möblierte Wohnungen mieten | Kaymakci Real Estate GmbH')
 
-@section('meta_description', 'Entdecken Sie ' . $properties->total() . ' exklusive Immobilienangebote bei Kaymakci Real Estate GmbH. Häuser, Wohnungen, Villen und Penthäuser in ganz Deutschland. Jetzt Traumimmobilie finden!')
+@section('meta_description', 'Entdecken Sie ' . $properties->total() . ' möblierte Mietobjekte bei Kaymakci Real Estate GmbH. Flexible Wohnlösungen für Geschäftsreisende, Berufstätige und temporäre Aufenthalte.')
 
-@section('meta_keywords', 'Immobilien kaufen, Haus kaufen Deutschland, Wohnung kaufen, Villa kaufen, Penthouse, Immobilienmakler, Kaymakci Real Estate GmbH')
+@section('meta_keywords', 'möblierte Wohnung mieten, möblierte Vermietung, Wohnen auf Zeit, Tagesmiete, Kaymakci Real Estate GmbH')
 
-@section('og_title', 'Immobilien kaufen in Deutschland | Kaymakci Real Estate GmbH')
-@section('og_description', 'Entdecken Sie exklusive Immobilienangebote bei Kaymakci Real Estate GmbH. Häuser, Wohnungen und mehr in ganz Deutschland.')
+@section('og_title', 'Möblierte Wohnungen mieten | Kaymakci Real Estate GmbH')
+@section('og_description', 'Entdecken Sie möblierte Mietobjekte für flexibles Wohnen auf Zeit bei Kaymakci Real Estate GmbH.')
 
 @section('structured_data')
 @php
@@ -29,7 +29,13 @@ $itemList = [
                 'offers' => [
                     '@type' => 'Offer',
                     'price' => $property->price,
-                    'priceCurrency' => 'EUR'
+                    'priceCurrency' => 'EUR',
+                    'priceSpecification' => [
+                        '@type' => 'UnitPriceSpecification',
+                        'price' => $property->price,
+                        'priceCurrency' => 'EUR',
+                        'unitText' => 'Person pro Nacht'
+                    ]
                 ]
             ]
         ];
@@ -61,8 +67,8 @@ $breadcrumb = [
     {{-- Hero --}}
     <section class="bg-blue-600 text-white py-16" aria-labelledby="hero-title">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 id="hero-title" class="text-4xl font-bold mb-4">Immobilien kaufen bei Kaymakci Real Estate GmbH</h1>
-            <p class="text-xl text-blue-100">Finden Sie gemeinsam mit uns Ihr Traumhaus in Deutschland</p>
+            <h1 id="hero-title" class="text-4xl font-bold mb-4">Möblierte Wohnungen bei Kaymakci Real Estate GmbH</h1>
+            <p class="text-xl text-blue-100">Flexibel wohnen – komfortabel und bezugsfertig</p>
         </div>
     </section>
 
@@ -102,8 +108,9 @@ $breadcrumb = [
                                 <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition" itemprop="name">{{ $property->title }}</h3>
                                 <p class="text-sm text-gray-500 mt-1" itemprop="address">{{ $property->location }}</p>
                                 <p class="text-xl font-bold text-blue-600 mt-3" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
-                                    <span itemprop="price" content="{{ $property->price }}">{{ number_format($property->price, 0, ',', '.') }}</span>
+                                    <span itemprop="price" content="{{ $property->price }}">{{ number_format($property->price, 2, ',', '.') }}</span>
                                     <span itemprop="priceCurrency" content="EUR">€</span>
+                                    <span class="text-sm font-medium text-gray-500">pro Person/Nacht</span>
                                 </p>
                                 <div class="flex gap-4 mt-3 text-sm text-gray-500">
                                     <span><strong>{{ $property->bedrooms }}</strong> Zimmer</span>

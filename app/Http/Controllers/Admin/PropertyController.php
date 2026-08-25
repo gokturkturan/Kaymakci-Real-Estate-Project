@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Property;
 use App\Models\PropertyImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 class PropertyController extends Controller
@@ -33,6 +34,11 @@ class PropertyController extends Controller
             'area' => 'required|numeric|min:0',
             'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
+
+        $coordinates = $this->geocodeAddress($validated['location']);
+        if ($coordinates) {
+            $validated = array_merge($validated, $coordinates);
+        }
 
         $property = Property::create($validated);
 
@@ -67,10 +73,37 @@ class PropertyController extends Controller
             'bedrooms' => 'required|integer|min:0',
             'bathrooms' => 'required|integer|min:0',
             'area' => 'required|numeric|min:0',
+            'image_order' => 'nullable|array',
+            'image_order.*' => 'integer',
             'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
 
+        if ($property->location !== $validated['location'] || $property->latitude === null || $property->longitude === null) {
+            $coordinates = $this->geocodeAddress($validated['location']);
+            $validated = array_merge($validated, $coordinates ?? ['latitude' => null, 'longitude' => null]);
+        }
+
         $property->update($validated);
+
+        if (!empty($validated['image_order'])) {
+            $orderedIds = collect($validated['image_order'])
+                ->map(fn($imageId) => (int) $imageId)
+                ->unique()
+                ->values();
+            $existingImages = $property->images()->get()->keyBy('id');
+            $order = 0;
+
+            foreach ($orderedIds as $imageId) {
+                if ($existingImages->has($imageId)) {
+                    $existingImages[$imageId]->update(['order' => $order++]);
+                    $existingImages->forget($imageId);
+                }
+            }
+
+            foreach ($existingImages as $image) {
+                $image->update(['order' => $order++]);
+            }
+        }
 
         if ($request->hasFile('images')) {
             $maxOrder = $property->images()->max('order') ?? -1;
@@ -113,5 +146,32 @@ class PropertyController extends Controller
         }
 
         return back()->with('success', 'Bild wurde erfolgreich gelöscht.');
+    }
+
+    private function geocodeAddress(string $address): ?array
+    {
+        try {
+            $response = Http::withoutVerifying()
+                ->acceptJson()
+                ->withUserAgent(config('app.name') . ' property geocoder')
+                ->timeout(8)
+                ->get('https://nominatim.openstreetmap.org/search', [
+                    'q' => $address,
+                    'format' => 'jsonv2',
+                    'limit' => 1,
+                ]);
+
+            $result = $response->json()[0] ?? null;
+            if (!$response->successful() || !isset($result['lat'], $result['lon'])) {
+                return null;
+            }
+
+            return [
+                'latitude' => $result['lat'],
+                'longitude' => $result['lon'],
+            ];
+        } catch (\Throwable) {
+            return null;
+        }
     }
 }

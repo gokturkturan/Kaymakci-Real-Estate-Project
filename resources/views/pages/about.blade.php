@@ -20,55 +20,27 @@
         <div class="bg-white rounded-xl shadow-md p-8">
 
             <div class="prose prose-lg max-w-none">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Willkommen bei Kaymakci Real Estate GmbH</h2>
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Über Kaymakci Real Estate GmbH</h2>
 
                 <p class="text-gray-600 leading-relaxed mb-6">
-                    Kaymakci Real Estate GmbH ist Ihr vertrauenswürdiger Partner für alle Immobilienangelegenheiten in Deutschland.
-                    Mit jahrelanger Erfahrung und tiefgreifendem Marktwissen unterstützen wir Sie dabei,
-                    die perfekte Immobilie zu finden - sei es ein gemütliches Zuhause, eine lukrative Kapitalanlage
-                    oder Ihr Traumhaus.
+                    Die Kaymakci Real Estate GmbH ist Ihr zuverlässiger Partner im Bereich der möblierten Vermietung.
+                    Wir haben uns darauf spezialisiert, komfortabel ausgestattete Immobilien für Menschen anzubieten,
+                    die eine flexible und unkomplizierte Wohnlösung suchen.
                 </p>
 
-                <h3 class="text-xl font-semibold text-gray-900 mt-8 mb-4">Unsere Mission</h3>
                 <p class="text-gray-600 leading-relaxed mb-6">
-                    Wir glauben daran, dass jeder das Recht auf ein perfektes Zuhause hat.
-                    Deshalb setzen wir alles daran, Ihnen nicht nur Immobilien zu zeigen,
-                    sondern die richtige Immobilie für Ihre individuellen Bedürfnisse zu finden.
+                    Unser Anspruch ist es, unseren Mietern ein Zuhause auf Zeit zu bieten – modern, komfortabel und bezugsfertig.
+                    Dabei legen wir großen Wert auf eine professionelle Betreuung, gepflegte Immobilien und einen reibungslosen Ablauf
+                    von der Anfrage bis zur Vermietung.
                 </p>
 
-                <h3 class="text-xl font-semibold text-gray-900 mt-8 mb-4">Warum Kaymakci Real Estate GmbH?</h3>
-                <ul class="list-none space-y-4 mb-6">
-                    <li class="flex items-start gap-3">
-                        <svg class="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                        </svg>
-                        <span class="text-gray-600"><strong>Persönliche Beratung:</strong> Jeder Kunde ist einzigartig - und so behandeln wir Sie auch.</span>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <svg class="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                        </svg>
-                        <span class="text-gray-600"><strong>Marktkenntnis:</strong> Wir kennen den deutschen Immobilienmarkt in- und auswendig.</span>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <svg class="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                        </svg>
-                        <span class="text-gray-600"><strong>Transparenz:</strong> Keine versteckten Kosten, keine bösen Überraschungen.</span>
-                    </li>
-                    <li class="flex items-start gap-3">
-                        <svg class="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                        </svg>
-                        <span class="text-gray-600"><strong>Rundum-Service:</strong> Von der ersten Besichtigung bis zum Notartermin - wir sind für Sie da.</span>
-                    </li>
-                </ul>
-
-                <h3 class="text-xl font-semibold text-gray-900 mt-8 mb-4">Unsere Werte</h3>
                 <p class="text-gray-600 leading-relaxed mb-6">
-                    Vertrauen, Integrität und Kundenzufriedenheit stehen bei uns an erster Stelle.
-                    Wir arbeiten stets in Ihrem besten Interesse und sorgen dafür,
-                    dass der Kauf oder Verkauf Ihrer Immobilie zu einem positiven Erlebnis wird.
+                    Mit unserem Service richten wir uns sowohl an Geschäftsreisende und Berufstätige als auch an Personen,
+                    die für einen bestimmten Zeitraum eine möblierte Wohnung benötigen.
+                </p>
+
+                <p class="text-gray-600 leading-relaxed mb-6">
+                    <strong>Kaymakci Real Estate GmbH – komfortabel wohnen, flexibel bleiben.</strong>
                 </p>
             </div>
 

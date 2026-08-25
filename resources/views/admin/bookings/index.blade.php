@@ -69,6 +69,7 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Immobilie</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kunde</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Gäste</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Gesamtpreis</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Aktionen</th>
                         </tr>
@@ -96,6 +97,10 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="text-gray-900">{{ $booking->guests }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <p class="font-semibold text-gray-900">{{ number_format($booking->display_total_price, 2, ',', '.') }} &euro;</p>
+                                    <p class="text-sm text-gray-500">{{ number_format($booking->display_price_per_person_per_night, 2, ',', '.') }} &euro; / Person/Nacht</p>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php

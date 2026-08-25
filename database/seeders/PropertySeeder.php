@@ -14,7 +14,7 @@ class PropertySeeder extends Seeder
             [
                 'title' => 'Villa mit Seeblick',
                 'description' => "Luxuriöse Villa mit einzigartigem Seeblick und großem Garten. Dieses Haus wurde mit moderner Architektur entworfen und bietet ein offenes Küchenkonzept, ein geräumiges Wohnzimmer und Seeblick aus jedem Zimmer.\n\nDie Villa ist mit einem privaten Pool, einem Grillplatz und Parkplätzen ausgestattet. Das Stadtzentrum ist in 15 Minuten erreichbar.",
-                'price' => 850000,
+                'price' => 250,
                 'location' => 'Starnberg, Bayern',
                 'bedrooms' => 5,
                 'bathrooms' => 3,
@@ -28,7 +28,7 @@ class PropertySeeder extends Seeder
             [
                 'title' => 'Stadtwohnung im Zentrum',
                 'description' => "Moderne Wohnung in Berlin-Mitte, nur wenige Gehminuten von der U-Bahn entfernt. Neubau mit Aufzug und Tiefgarage.\n\nDiese Wohnung mit offener Küche, großem Balkon und Abstellraum bietet eine ausgezeichnete Verkehrsanbindung.",
-                'price' => 420000,
+                'price' => 120,
                 'location' => 'Mitte, Berlin',
                 'bedrooms' => 3,
                 'bathrooms' => 1,
@@ -41,7 +41,7 @@ class PropertySeeder extends Seeder
             [
                 'title' => 'Einfamilienhaus im Grünen',
                 'description' => "Freistehendes Einfamilienhaus inmitten der grünen Natur des Schwarzwalds. Mit 500 m² Garten bietet es ein Leben in Harmonie mit der Natur.\n\nIdeal für gemütliche Kaminabende im Winter und Gartenaktivitäten im Sommer.",
-                'price' => 380000,
+                'price' => 150,
                 'location' => 'Freiburg, Baden-Württemberg',
                 'bedrooms' => 4,
                 'bathrooms' => 2,
@@ -55,7 +55,7 @@ class PropertySeeder extends Seeder
             [
                 'title' => 'Luxus-Penthouse',
                 'description' => "Penthouse-Wohnung mit Dachterrasse in der prestigeträchtigsten Lage Münchens. 360-Grad-Stadtblick.\n\nAusgestattet mit Smart-Home-System, Whirlpool, privatem Aufzug und Tiefgaragenplatz für 2 Fahrzeuge.",
-                'price' => 1200000,
+                'price' => 300,
                 'location' => 'Maxvorstadt, München',
                 'bedrooms' => 4,
                 'bathrooms' => 3,
@@ -69,7 +69,7 @@ class PropertySeeder extends Seeder
             [
                 'title' => 'Studio-Apartment als Kapitalanlage',
                 'description' => "Ideales Studio-Apartment in Universitätsnähe als Kapitalanlage. Möbliert übergeben, hohe Mietrendite möglich.\n\nDie Wohnanlage bietet Sicherheitsdienst, Parkplätze und Gemeinschaftseinrichtungen.",
-                'price' => 145000,
+                'price' => 85,
                 'location' => 'Heidelberg, Baden-Württemberg',
                 'bedrooms' => 1,
                 'bathrooms' => 1,
@@ -82,7 +82,7 @@ class PropertySeeder extends Seeder
             [
                 'title' => 'Historisches Fachwerkhaus',
                 'description' => "Liebevoll restauriertes authentisches Fachwerkhaus. Ein einzigartiger Wohnraum, der historischen Charme mit modernem Komfort verbindet.\n\nMit Obstbäumen im Garten ist dieses Haus ideal für alle, die ein ruhiges Leben suchen.",
-                'price' => 480000,
+                'price' => 180,
                 'location' => 'Rothenburg ob der Tauber, Bayern',
                 'bedrooms' => 3,
                 'bathrooms' => 2,
@@ -96,7 +96,7 @@ class PropertySeeder extends Seeder
             [
                 'title' => 'Moderne Maisonette-Wohnung',
                 'description' => "Stilvolle Maisonette-Wohnung über zwei Etagen mit großzügiger Raumaufteilung. Bodentiefe Fenster sorgen für viel Tageslicht.\n\nInklusive Stellplatz in der Tiefgarage und Kellerabteil. Energieeffiziente Bauweise.",
-                'price' => 520000,
+                'price' => 175,
                 'location' => 'Düsseldorf, Nordrhein-Westfalen',
                 'bedrooms' => 4,
                 'bathrooms' => 2,
@@ -110,7 +110,7 @@ class PropertySeeder extends Seeder
             [
                 'title' => 'Reihenhaus mit Garten',
                 'description' => "Gepflegtes Reihenhaus in familienfreundlicher Wohngegend. Ruhige Lage mit guter Anbindung an Schulen und Einkaufsmöglichkeiten.\n\nDer sonnige Garten bietet Platz für Kinder zum Spielen und entspannte Grillabende.",
-                'price' => 295000,
+                'price' => 140,
                 'location' => 'Hamburg-Rahlstedt',
                 'bedrooms' => 3,
                 'bathrooms' => 1,
@@ -123,7 +123,7 @@ class PropertySeeder extends Seeder
             [
                 'title' => 'Exklusives Loft im Industriestil',
                 'description' => "Einzigartiges Loft in einer umgebauten Fabrikhalle. Hohe Decken, originale Backsteinwände und große Industriefenster.\n\nOffener Wohn- und Essbereich mit Designer-Küche. Perfekt für Kunstliebhaber und kreative Köpfe.",
-                'price' => 680000,
+                'price' => 190,
                 'location' => 'Leipzig, Sachsen',
                 'bedrooms' => 2,
                 'bathrooms' => 2,
@@ -137,7 +137,7 @@ class PropertySeeder extends Seeder
             [
                 'title' => 'Alpenblick-Chalet',
                 'description' => "Traumhaftes Chalet mit atemberaubendem Panoramablick auf die Alpen. Hochwertige Holzausstattung und gemütlicher Kachelofen.\n\nIdeal als Feriendomizil oder dauerhafter Wohnsitz für Naturliebhaber. Skigebiet in 10 Minuten erreichbar.",
-                'price' => 750000,
+                'price' => 220,
                 'location' => 'Garmisch-Partenkirchen, Bayern',
                 'bedrooms' => 4,
                 'bathrooms' => 2,
@@ -151,7 +151,7 @@ class PropertySeeder extends Seeder
             [
                 'title' => 'Neubau-Apartment mit Balkon',
                 'description' => "Modernes Apartment im Neubau mit großzügigem Südbalkon. Hochwertige Ausstattung mit Fußbodenheizung und Einbauküche.\n\nRuhige Lage im Grünen, dennoch nur 15 Minuten zur Innenstadt. Ideal für Berufstätige.",
-                'price' => 265000,
+                'price' => 110,
                 'location' => 'Frankfurt-Niederrad',
                 'bedrooms' => 2,
                 'bathrooms' => 1,
@@ -164,7 +164,7 @@ class PropertySeeder extends Seeder
             [
                 'title' => 'Herrschaftliche Altbauwohnung',
                 'description' => "Repräsentative Altbauwohnung mit Stuck, Parkettböden und hohen Decken. Klassische Eleganz trifft auf moderne Annehmlichkeiten.\n\nZentrale Lage im beliebten Viertel. Balkon zum ruhigen Innenhof.",
-                'price' => 590000,
+                'price' => 165,
                 'location' => 'Stuttgart-West',
                 'bedrooms' => 4,
                 'bathrooms' => 2,

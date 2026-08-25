@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Property;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
@@ -34,6 +35,9 @@ class BookingController extends Controller
             return back()->with('error', 'Die gewählten Daten sind leider nicht mehr verfügbar. Bitte wählen Sie andere Daten.');
         }
 
+        $nights = Carbon::parse($validated['check_in'])->diffInDays(Carbon::parse($validated['check_out']));
+        $pricePerPersonPerNight = (float) $property->price;
+
         $booking = Booking::create([
             'property_id' => $property->id,
             'check_in' => $validated['check_in'],
@@ -42,6 +46,8 @@ class BookingController extends Controller
             'email' => $validated['email'],
             'phone' => $validated['phone'] ?? null,
             'guests' => $validated['guests'],
+            'price_per_person_per_night' => $pricePerPersonPerNight,
+            'total_price' => $nights * $validated['guests'] * $pricePerPersonPerNight,
             'message' => $validated['message'] ?? null,
             'status' => 'pending',
         ]);

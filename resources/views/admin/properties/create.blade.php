@@ -35,17 +35,18 @@
                     </div>
 
                     <div>
-                        <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Preis (EUR) *</label>
-                        <input type="number" id="price" name="price" required value="{{ old('price') }}" min="0" step="1000"
+                        <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Preis pro Person / Nacht (EUR) *</label>
+                        <input type="number" id="price" name="price" required value="{{ old('price') }}" min="0" step="0.01"
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                               placeholder="z.B. 450000">
+                               placeholder="z.B. 99,00">
                     </div>
 
                     <div>
                         <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Standort *</label>
                         <input type="text" id="location" name="location" required value="{{ old('location') }}"
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                               placeholder="z.B. Frankfurt am Main">
+                               placeholder="z.B. Mainzer Landstraße 50, 60329 Frankfurt am Main">
+                        <p class="text-xs text-gray-500 mt-1">Die vollständige Adresse wird automatisch für die Karte verwendet.</p>
                     </div>
 
                     <div>
@@ -81,7 +82,8 @@
                             <input type="file" id="images" name="images[]" multiple accept="image/*" class="hidden"
                                    onchange="previewImages(this)">
                         </div>
-                        <div id="image-preview" class="grid grid-cols-4 gap-4 mt-4"></div>
+                        <p class="text-sm text-gray-500 mt-3">Ziehen Sie die Bilder in die gewünschte Reihenfolge. Das erste Bild wird als Titelbild verwendet.</p>
+                        <div id="image-preview" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4"></div>
                     </div>
                 </div>
 
@@ -100,25 +102,109 @@
     </div>
 
     <script>
+        let selectedImages = [];
+        let draggedImageIndex = null;
+
         function previewImages(input) {
+            const existingImages = new Set(selectedImages.map(image => `${image.name}-${image.size}-${image.lastModified}`));
+            Array.from(input.files).forEach((image) => {
+                const imageKey = `${image.name}-${image.size}-${image.lastModified}`;
+                if (!existingImages.has(imageKey)) {
+                    selectedImages.push(image);
+                    existingImages.add(imageKey);
+                }
+            });
+            syncImageInput();
+            renderImagePreviews();
+        }
+
+        function moveImage(fromIndex, toIndex) {
+            if (toIndex < 0 || toIndex >= selectedImages.length || fromIndex === toIndex) {
+                return;
+            }
+
+            const [image] = selectedImages.splice(fromIndex, 1);
+            selectedImages.splice(toIndex, 0, image);
+            syncImageInput();
+            renderImagePreviews();
+        }
+
+        function syncImageInput() {
+            const dataTransfer = new DataTransfer();
+            selectedImages.forEach((image) => dataTransfer.items.add(image));
+            document.getElementById('images').files = dataTransfer.files;
+        }
+
+        function removeSelectedImage(index) {
+            selectedImages.splice(index, 1);
+            syncImageInput();
+            renderImagePreviews();
+        }
+
+        function renderImagePreviews() {
             const preview = document.getElementById('image-preview');
             preview.innerHTML = '';
 
-            if (input.files) {
-                Array.from(input.files).forEach((file, index) => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const div = document.createElement('div');
-                        div.className = 'relative';
-                        div.innerHTML = `
-                            <img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg">
-                            <span class="absolute bottom-1 right-1 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">${index + 1}</span>
-                        `;
-                        preview.appendChild(div);
-                    };
-                    reader.readAsDataURL(file);
+            selectedImages.forEach((file, index) => {
+                const card = document.createElement('div');
+                card.className = 'relative rounded-lg border border-gray-200 bg-gray-50 p-2 cursor-move';
+                card.draggable = true;
+
+                card.addEventListener('dragstart', () => {
+                    draggedImageIndex = index;
+                    card.classList.add('opacity-50');
                 });
-            }
+                card.addEventListener('dragend', () => {
+                    draggedImageIndex = null;
+                    card.classList.remove('opacity-50');
+                });
+                card.addEventListener('dragover', (event) => event.preventDefault());
+                card.addEventListener('drop', (event) => {
+                    event.preventDefault();
+                    if (draggedImageIndex !== null) {
+                        moveImage(draggedImageIndex, index);
+                    }
+                });
+
+                const image = document.createElement('img');
+                image.src = URL.createObjectURL(file);
+                image.alt = `Vorschau ${index + 1}`;
+                image.className = 'w-full h-32 object-cover rounded-md';
+
+                const badge = document.createElement('span');
+                badge.className = 'absolute top-3 left-3 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded';
+                badge.textContent = index === 0 ? 'Titelbild' : `Bild ${index + 1}`;
+
+                const controls = document.createElement('div');
+                controls.className = 'flex gap-2 mt-2';
+
+                const moveLeft = document.createElement('button');
+                moveLeft.type = 'button';
+                moveLeft.className = 'flex-1 px-2 py-1 text-sm border border-gray-300 rounded hover:bg-white disabled:opacity-40';
+                moveLeft.textContent = '←';
+                moveLeft.title = 'Nach links verschieben';
+                moveLeft.disabled = index === 0;
+                moveLeft.addEventListener('click', () => moveImage(index, index - 1));
+
+                const moveRight = document.createElement('button');
+                moveRight.type = 'button';
+                moveRight.className = 'flex-1 px-2 py-1 text-sm border border-gray-300 rounded hover:bg-white disabled:opacity-40';
+                moveRight.textContent = '→';
+                moveRight.title = 'Nach rechts verschieben';
+                moveRight.disabled = index === selectedImages.length - 1;
+                moveRight.addEventListener('click', () => moveImage(index, index + 1));
+
+                const removeButton = document.createElement('button');
+                removeButton.type = 'button';
+                removeButton.className = 'px-2 py-1 text-sm text-red-600 border border-red-200 rounded hover:bg-red-50';
+                removeButton.textContent = 'Löschen';
+                removeButton.title = 'Aus Auswahl entfernen';
+                removeButton.addEventListener('click', () => removeSelectedImage(index));
+
+                controls.append(moveLeft, moveRight, removeButton);
+                card.append(image, badge, controls);
+                preview.appendChild(card);
+            });
         }
     </script>
 @endsection

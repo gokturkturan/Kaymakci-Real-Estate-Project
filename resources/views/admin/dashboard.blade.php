@@ -74,7 +74,7 @@
                         <p class="text-sm text-gray-600">{{ $property->location }}</p>
                     </div>
                     <div class="text-right">
-                        <p class="font-semibold text-gray-900">{{ number_format($property->price, 0, ',', '.') }} &euro;</p>
+                        <p class="font-semibold text-gray-900">{{ number_format($property->price, 2, ',', '.') }} &euro; <span class="text-sm font-normal text-gray-500">/ Person/Nacht</span></p>
                         <p class="text-sm text-gray-500">{{ $property->created_at->diffForHumans() }}</p>
                     </div>
                     <a href="{{ route('admin.properties.edit', $property) }}" class="text-blue-600 hover:text-blue-800">

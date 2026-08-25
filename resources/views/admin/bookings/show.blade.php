@@ -59,6 +59,14 @@
                     <p class="text-2xl font-bold text-purple-900">{{ $booking->guests }}</p>
                 </div>
 
+                <div class="bg-green-50 rounded-lg p-4">
+                    <p class="text-sm text-green-600 font-medium mb-1">Gesamtpreis</p>
+                    <p class="text-2xl font-bold text-green-900">{{ number_format($booking->display_total_price, 2, ',', '.') }} &euro;</p>
+                    <p class="text-sm text-green-700 mt-1">
+                        {{ $booking->nights }} Nächte × {{ $booking->guests }} {{ $booking->guests === 1 ? 'Person' : 'Personen' }} × {{ number_format($booking->display_price_per_person_per_night, 2, ',', '.') }} &euro;
+                    </p>
+                </div>
+
                 {{-- Customer Details --}}
                 <div>
                     <h3 class="text-lg font-semibold text-gray-900 mb-3">Kundendaten</h3>

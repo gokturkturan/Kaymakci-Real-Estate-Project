@@ -16,6 +16,8 @@ class Booking extends Model
         'email',
         'phone',
         'guests',
+        'price_per_person_per_night',
+        'total_price',
         'message',
         'status',
         'admin_notes',
@@ -24,6 +26,8 @@ class Booking extends Model
     protected $casts = [
         'check_in' => 'date',
         'check_out' => 'date',
+        'price_per_person_per_night' => 'decimal:2',
+        'total_price' => 'decimal:2',
     ];
 
     public function property(): BelongsTo
@@ -56,6 +60,16 @@ class Booking extends Model
     public function getNightsAttribute(): int
     {
         return $this->check_in->diffInDays($this->check_out);
+    }
+
+    public function getDisplayPricePerPersonPerNightAttribute(): float
+    {
+        return (float) ($this->price_per_person_per_night ?? $this->property?->price ?? 0);
+    }
+
+    public function getDisplayTotalPriceAttribute(): float
+    {
+        return (float) ($this->total_price ?? ($this->nights * $this->guests * $this->display_price_per_person_per_night));
     }
 
     /**
