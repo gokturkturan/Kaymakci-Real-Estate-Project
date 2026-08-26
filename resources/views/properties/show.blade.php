@@ -239,12 +239,10 @@ if ($property->first_image) {
                             <p class="text-sm text-gray-500">Einzelbett{{ $property->single_bed_count > 1 ? 'en' : '' }}</p>
                         </div>
                     @endif
-                    @if($property->has_parking)
-                        <div class="text-center">
-                            <p class="text-2xl font-bold text-gray-900">Ja</p>
-                            <p class="text-sm text-gray-500">Parkplatz</p>
-                        </div>
-                    @endif
+                    <div class="text-center">
+                        <p class="text-2xl font-bold text-gray-900">{{ $property->has_parking ? 'Ja' : 'Nein' }}</p>
+                        <p class="text-sm text-gray-500">Parkplatz</p>
+                    </div>
                 </section>
 
                 <section aria-labelledby="description-title">
