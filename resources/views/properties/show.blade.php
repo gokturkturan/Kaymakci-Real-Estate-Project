@@ -331,7 +331,7 @@ if ($property->first_image) {
 
                         async fetchBookedDates() {
                             try {
-                                const response = await fetch('/immobilie/{{ $property->id }}/buchungen');
+                                const response = await fetch('{{ route('bookings.dates', $property) }}');
                                 const data = await response.json();
                                 this.bookedDates = data.booked_dates || [];
                             } catch (error) {

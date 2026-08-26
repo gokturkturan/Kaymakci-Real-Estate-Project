@@ -3,14 +3,14 @@
 
 User-agent: *
 Allow: /
+Allow: /storage/
 Disallow: /admin/
 Disallow: /api/
 Disallow: /*.json$
-Disallow: /storage/
 Disallow: /vendor/
 
 # Sitemaps
-Sitemap: https://www.kaymakci-realestate.de/sitemap.xml
+Sitemap: https://kaymakcirealestate.de/sitemap.xml
 
 # Crawl-delay für respektvolles Crawling
 Crawl-delay: 1

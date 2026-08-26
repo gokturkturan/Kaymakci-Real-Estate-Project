@@ -8,7 +8,7 @@ class SitemapController extends Controller
 {
     public function index()
     {
-        $properties = Property::latest()->get();
+        $properties = Property::with('images')->latest()->get();
 
         return response()->view('sitemap', compact('properties'))
             ->header('Content-Type', 'application/xml');

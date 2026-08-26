@@ -10,6 +10,18 @@
         <priority>1.0</priority>
     </url>
 
+    {{-- Static Pages --}}
+    <url>
+        <loc>{{ route('pages.about') }}</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>{{ route('pages.contact') }}</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
     {{-- Property Pages --}}
     @foreach($properties as $property)
     <url>
@@ -17,13 +29,13 @@
         <lastmod>{{ $property->updated_at->toIso8601String() }}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
-        @if($property->image)
+        @foreach($property->images as $image)
         <image:image>
-            <image:loc>{{ $property->image }}</image:loc>
+            <image:loc>{{ url($image->url) }}</image:loc>
             <image:title>{{ $property->title }}</image:title>
             <image:caption>{{ $property->title }} - {{ $property->bedrooms }} Zimmer in {{ $property->location }}</image:caption>
         </image:image>
-        @endif
+        @endforeach
     </url>
     @endforeach
 
