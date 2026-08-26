@@ -72,6 +72,80 @@ $breadcrumb = [
         </div>
     </section>
 
+    {{-- Filter --}}
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
+        <form method="GET" action="{{ route('properties.index') }}" class="bg-white rounded-xl shadow-md p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+                <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Standort</label>
+                <select id="location" name="location" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">Alle Standorte</option>
+                    @foreach($locations as $location)
+                        <option value="{{ $location }}" {{ request('location') === $location ? 'selected' : '' }}>{{ $location }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Preis pro Person/Nacht (€)</label>
+                <div class="flex gap-2">
+                    <input type="number" name="price_min" value="{{ request('price_min') }}" placeholder="Von" min="0"
+                           class="w-1/2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <input type="number" name="price_max" value="{{ request('price_max') }}" placeholder="Bis" min="0"
+                           class="w-1/2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+
+            <div>
+                <label for="bedrooms" class="block text-sm font-medium text-gray-700 mb-1">Zimmer (mind.)</label>
+                <select id="bedrooms" name="bedrooms" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">Egal</option>
+                    @for($i = 1; $i <= 6; $i++)
+                        <option value="{{ $i }}" {{ (string) request('bedrooms') === (string) $i ? 'selected' : '' }}>{{ $i }}+</option>
+                    @endfor
+                </select>
+            </div>
+
+            <div>
+                <label for="bathrooms" class="block text-sm font-medium text-gray-700 mb-1">Badezimmer (mind.)</label>
+                <select id="bathrooms" name="bathrooms" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">Egal</option>
+                    @for($i = 1; $i <= 4; $i++)
+                        <option value="{{ $i }}" {{ (string) request('bathrooms') === (string) $i ? 'selected' : '' }}>{{ $i }}+</option>
+                    @endfor
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Fläche (m²)</label>
+                <div class="flex gap-2">
+                    <input type="number" name="area_min" value="{{ request('area_min') }}" placeholder="Von" min="0"
+                           class="w-1/2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <input type="number" name="area_max" value="{{ request('area_max') }}" placeholder="Bis" min="0"
+                           class="w-1/2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            </div>
+
+            <div class="flex items-end">
+                <label class="flex items-center gap-2 cursor-pointer select-none py-2">
+                    <input type="checkbox" name="parking" value="1" {{ request('parking') ? 'checked' : '' }}
+                           class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
+                    <span class="text-sm font-medium text-gray-700">Nur mit Parkplatz</span>
+                </label>
+            </div>
+
+            <div class="lg:col-span-2 flex items-end justify-end gap-3">
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
+                    Filtern
+                </button>
+                @if(request()->anyFilled(['location', 'price_min', 'price_max', 'bedrooms', 'bathrooms', 'area_min', 'area_max', 'parking']))
+                    <a href="{{ route('properties.index') }}" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                        Zurücksetzen
+                    </a>
+                @endif
+            </div>
+        </form>
+    </section>
+
     {{-- Angebotsliste --}}
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" aria-labelledby="listings-title">
         <h2 id="listings-title" class="text-2xl font-bold text-gray-900 mb-8">Aktuelle Immobilienangebote ({{ $properties->total() }})</h2>

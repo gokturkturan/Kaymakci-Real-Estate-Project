@@ -3,13 +3,51 @@
 namespace App\Http\Controllers;
 
 use App\Models\Property;
+use Illuminate\Http\Request;
 
 class PropertyController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $properties = Property::with('images')->latest()->paginate(6);
-        return view('properties.index', compact('properties'));
+        $query = Property::with('images');
+
+        if ($request->filled('location')) {
+            $query->where('location', $request->input('location'));
+        }
+
+        if ($request->filled('price_min')) {
+            $query->where('price', '>=', $request->input('price_min'));
+        }
+
+        if ($request->filled('price_max')) {
+            $query->where('price', '<=', $request->input('price_max'));
+        }
+
+        if ($request->filled('bedrooms')) {
+            $query->where('bedrooms', '>=', $request->input('bedrooms'));
+        }
+
+        if ($request->filled('bathrooms')) {
+            $query->where('bathrooms', '>=', $request->input('bathrooms'));
+        }
+
+        if ($request->filled('area_min')) {
+            $query->where('area', '>=', $request->input('area_min'));
+        }
+
+        if ($request->filled('area_max')) {
+            $query->where('area', '<=', $request->input('area_max'));
+        }
+
+        if ($request->boolean('parking')) {
+            $query->where('has_parking', true);
+        }
+
+        $properties = $query->latest()->paginate(6)->withQueryString();
+
+        $locations = Property::select('location')->distinct()->orderBy('location')->pluck('location');
+
+        return view('properties.index', compact('properties', 'locations'));
     }
 
     public function show(Property $property)
