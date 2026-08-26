@@ -11,8 +11,9 @@ class PropertyController extends Controller
     {
         $query = Property::with('images');
 
-        if ($request->filled('location')) {
-            $query->where('location', $request->input('location'));
+        $selectedLocations = array_filter((array) $request->input('location', []));
+        if (!empty($selectedLocations)) {
+            $query->whereIn('location', $selectedLocations);
         }
 
         if ($request->filled('price_min')) {

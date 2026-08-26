@@ -75,14 +75,29 @@ $breadcrumb = [
     {{-- Filter --}}
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
         <form method="GET" action="{{ route('properties.index') }}" class="bg-white rounded-xl shadow-md p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div>
-                <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Standort</label>
-                <select id="location" name="location" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">Alle Standorte</option>
-                    @foreach($locations as $location)
-                        <option value="{{ $location }}" {{ request('location') === $location ? 'selected' : '' }}>{{ $location }}</option>
-                    @endforeach
-                </select>
+            @php $selectedLocations = (array) request('location', []); @endphp
+            <div class="relative" x-data="{ open: false, selected: {{ Illuminate\Support\Js::from(array_values($selectedLocations)) }} }" @click.outside="open = false">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Standort</label>
+                <button type="button" @click="open = !open"
+                        class="w-full flex items-center justify-between gap-2 px-3 py-2 border border-gray-300 rounded-lg bg-white text-left focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <span class="truncate text-gray-700" x-text="selected.length ? selected.length + ' ausgewählt' : 'Alle Standorte'"></span>
+                    <svg class="w-4 h-4 text-gray-400 flex-shrink-0 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+
+                <div x-show="open" x-transition style="display: none;"
+                     class="absolute z-20 mt-1 w-full max-h-60 overflow-y-auto bg-white border border-gray-300 rounded-lg shadow-lg">
+                    @forelse($locations as $location)
+                        <label class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
+                            <input type="checkbox" name="location[]" value="{{ $location }}" x-model="selected"
+                                   class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
+                            {{ $location }}
+                        </label>
+                    @empty
+                        <p class="px-3 py-2 text-sm text-gray-400">Keine Standorte vorhanden</p>
+                    @endforelse
+                </div>
             </div>
 
             <div>
