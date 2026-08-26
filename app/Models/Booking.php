@@ -73,12 +73,12 @@ class Booking extends Model
     }
 
     /**
-     * Get all booked date ranges for a property
+     * Get all booked date ranges for a property (only bookings confirmed by an admin)
      */
     public static function getBookedDates(int $propertyId): array
     {
         $bookings = self::where('property_id', $propertyId)
-            ->whereIn('status', ['pending', 'approved'])
+            ->where('status', 'approved')
             ->where('check_out', '>=', now()->toDateString())
             ->get(['check_in', 'check_out']);
 
