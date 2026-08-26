@@ -47,7 +47,6 @@
                         <input type="text" id="location" name="location" required value="{{ old('location', $property->location) }}"
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                placeholder="z.B. Mainzer Landstraße 50, 60329 Frankfurt am Main">
-                        <p class="text-xs text-gray-500 mt-1">Adres değişirse harita konumu otomatik güncellenir.</p>
                     </div>
 
                     <div>
@@ -71,25 +70,62 @@
                                placeholder="z.B. 150">
                     </div>
 
-                    <!-- Existing Images -->
-                    @if($property->images->count() > 0)
+                    <div>
+                        <label for="king_size_bed_count" class="block text-sm font-medium text-gray-700 mb-1">King Size Betten</label>
+                        <input type="number" id="king_size_bed_count" name="king_size_bed_count" required value="{{ old('king_size_bed_count', $property->king_size_bed_count) }}" min="0"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="z.B. 1">
+                    </div>
+
+                    <div>
+                        <label for="single_bed_count" class="block text-sm font-medium text-gray-700 mb-1">Einzelbetten</label>
+                        <input type="number" id="single_bed_count" name="single_bed_count" required value="{{ old('single_bed_count', $property->single_bed_count) }}" min="0"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="z.B. 2">
+                    </div>
+
+                    <div class="flex items-center">
+                        <label class="flex items-center gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="has_parking" name="has_parking" value="1" {{ old('has_parking', $property->has_parking) ? 'checked' : '' }}
+                                   class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
+                            <span class="text-sm font-medium text-gray-700">Parkplatz vorhanden</span>
+                        </label>
+                    </div>
+
+                    <!-- Existing Media (images + videos, shared order) -->
+                    @php
+                        $existingMedia = $property->images
+                            ->map(fn ($image) => ['type' => 'image', 'id' => $image->id, 'url' => $image->url, 'order' => $image->order])
+                            ->concat($property->videos->map(fn ($video) => ['type' => 'video', 'id' => $video->id, 'url' => $video->url, 'order' => $video->order]))
+                            ->sortBy('order')
+                            ->values();
+                    @endphp
+                    @if($existingMedia->count() > 0)
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Vorhandene Bilder ({{ $property->images->count() }})</label>
-                            <p class="text-sm text-gray-500 mb-3">Ziehen Sie die Bilder in die gewünschte Reihenfolge. Das erste Bild wird als Titelbild verwendet.</p>
-                            <div id="existing-image-order"></div>
-                            <div id="existing-images" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                                @foreach($property->images as $image)
-                                    <div class="existing-image-card relative rounded-lg overflow-hidden shadow-sm border border-gray-200 bg-gray-50 p-2 cursor-move"
-                                         data-image-id="{{ $image->id }}" draggable="true"
-                                         ondragstart="startExistingImageDrag(event, this)" ondragend="endExistingImageDrag(this)" ondragover="event.preventDefault()" ondrop="dropExistingImage(event, this)">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Vorhandene Medien ({{ $existingMedia->count() }})</label>
+                            <p class="text-sm text-gray-500 mb-3">Ziehen Sie Bilder und Videos in die gewünschte Reihenfolge. Das erste Bild wird als Titelbild verwendet.</p>
+                            <div id="existing-media-order"></div>
+                            <div id="existing-media" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                                @foreach($existingMedia as $item)
+                                    <div class="existing-media-card relative rounded-lg overflow-hidden shadow-sm border border-gray-200 bg-gray-50 p-2 cursor-move"
+                                         data-media-type="{{ $item['type'] }}" data-media-id="{{ $item['id'] }}" draggable="true"
+                                         ondragstart="startExistingMediaDrag(event, this)" ondragend="endExistingMediaDrag(this)" ondragover="event.preventDefault()" ondrop="dropExistingMedia(event, this)">
                                         <div class="relative aspect-square">
-                                            <img src="{{ $image->url }}" alt="Bild {{ $loop->iteration }}" class="w-full h-full object-cover rounded-md">
-                                            <span class="image-position absolute top-2 left-2 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded">{{ $loop->first ? 'Titelbild' : 'Bild ' . $loop->iteration }}</span>
+                                            @if($item['type'] === 'image')
+                                                <img src="{{ $item['url'] }}" alt="Bild" class="w-full h-full object-cover rounded-md">
+                                            @else
+                                                <video src="{{ $item['url'] }}" class="w-full h-full object-cover rounded-md" controls muted></video>
+                                            @endif
+                                            <span class="media-position absolute top-2 left-2 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded"></span>
                                         </div>
                                         <div class="flex gap-2 mt-2">
-                                            <button type="button" onclick="moveExistingImage(this.closest('.existing-image-card'), -1)" class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded hover:bg-white" title="Nach links verschieben">←</button>
-                                            <button type="button" onclick="moveExistingImage(this.closest('.existing-image-card'), 1)" class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded hover:bg-white" title="Nach rechts verschieben">→</button>
-                                            <button type="button" onclick="deleteImage({{ $image->id }}, '{{ csrf_token() }}')" class="px-2 py-1 text-sm text-red-600 border border-red-200 rounded hover:bg-red-50" title="Bild löschen">Löschen</button>
+                                            <button type="button" onclick="moveExistingMedia(this.closest('.existing-media-card'), -1)" class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded hover:bg-white" title="Nach links verschieben">←</button>
+                                            <button type="button" onclick="moveExistingMedia(this.closest('.existing-media-card'), 1)" class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded hover:bg-white" title="Nach rechts verschieben">→</button>
+                                            @if($item['type'] === 'image')
+                                                <button type="button" onclick="deleteImage({{ $item['id'] }}, '{{ csrf_token() }}')" class="px-2 py-1 text-sm text-red-600 border border-red-200 rounded hover:bg-red-50" title="Bild löschen">Löschen</button>
+                                            @else
+                                                <button type="button" onclick="deleteVideo({{ $item['id'] }}, '{{ csrf_token() }}')" class="px-2 py-1 text-sm text-red-600 border border-red-200 rounded hover:bg-red-50" title="Video löschen">Löschen</button>
+                                            @endif
                                         </div>
                                     </div>
                                 @endforeach
@@ -97,20 +133,24 @@
                         </div>
                     @endif
 
-                    <!-- Add New Images -->
+                    <!-- Add New Media -->
                     <div class="md:col-span-2">
-                        <label for="images" class="block text-sm font-medium text-gray-700 mb-1">Neue Bilder hinzufügen</label>
+                        <label for="media-input" class="block text-sm font-medium text-gray-700 mb-1">Neue Bilder &amp; Videos hinzufügen</label>
                         <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition cursor-pointer"
-                             onclick="document.getElementById('images').click()">
+                             onclick="document.getElementById('media-input').click()">
                             <svg class="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
-                            <p class="text-gray-600">Klicken Sie hier oder ziehen Sie Bilder hierher</p>
-                            <p class="text-sm text-gray-400 mt-1">JPEG, PNG, WebP (max. 5MB pro Bild)</p>
-                            <input type="file" id="images" name="images[]" multiple accept="image/*" class="hidden"
-                                   onchange="previewImages(this)">
+                            <p class="text-gray-600">Klicken Sie hier oder ziehen Sie Bilder/Videos hierher</p>
+                            <p class="text-sm text-gray-400 mt-1">JPEG, PNG, WebP (max. 5MB) · MP4, MOV, WebM (max. 100MB)</p>
+                            <input type="file" id="media-input" multiple accept="image/*,video/mp4,video/quicktime,video/webm" class="hidden"
+                                   onchange="handleMediaInput(this)">
+                            <input type="file" id="images" name="images[]" multiple class="hidden">
+                            <input type="file" id="videos" name="videos[]" multiple class="hidden">
+                            <div id="media-type-order"></div>
                         </div>
-                        <div id="image-preview" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4"></div>
+                        <p class="text-sm text-gray-500 mt-3">Neue Medien werden nach den vorhandenen Medien angehängt. Ziehen Sie sie hier in die gewünschte Reihenfolge untereinander.</p>
+                        <div id="media-preview" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4"></div>
                     </div>
                 </div>
 
@@ -129,111 +169,72 @@
     </div>
 
     <script>
-        let selectedImages = [];
-        let draggedExistingImage = null;
+        // --- Existing media (already saved) reordering ---
+        let draggedExistingMedia = null;
 
-        function syncExistingImageOrder() {
-            const orderContainer = document.getElementById('existing-image-order');
-            const imageCards = document.querySelectorAll('#existing-images .existing-image-card');
+        function syncExistingMediaOrder() {
+            const orderContainer = document.getElementById('existing-media-order');
+            const cards = document.querySelectorAll('#existing-media .existing-media-card');
             if (!orderContainer) return;
 
             orderContainer.innerHTML = '';
-            imageCards.forEach((card, index) => {
+            let imageCounter = 0;
+            let videoCounter = 0;
+
+            cards.forEach((card) => {
+                const type = card.dataset.mediaType;
                 const input = document.createElement('input');
                 input.type = 'hidden';
-                input.name = 'image_order[]';
-                input.value = card.dataset.imageId;
+                input.name = 'media_order[]';
+                input.value = `${type}-${card.dataset.mediaId}`;
                 orderContainer.appendChild(input);
-                card.querySelector('.image-position').textContent = index === 0 ? 'Titelbild' : `Bild ${index + 1}`;
+
+                const badge = card.querySelector('.media-position');
+                if (type === 'image') {
+                    imageCounter++;
+                    badge.textContent = imageCounter === 1 ? 'Titelbild' : `Bild ${imageCounter}`;
+                } else {
+                    videoCounter++;
+                    badge.textContent = `Video ${videoCounter}`;
+                }
             });
         }
 
-        function startExistingImageDrag(event, card) {
-            draggedExistingImage = card;
+        function startExistingMediaDrag(event, card) {
+            draggedExistingMedia = card;
             event.dataTransfer.effectAllowed = 'move';
             card.classList.add('opacity-50');
         }
 
-        function dropExistingImage(event, targetCard) {
+        function dropExistingMedia(event, targetCard) {
             event.preventDefault();
-            if (draggedExistingImage && draggedExistingImage !== targetCard) {
+            if (draggedExistingMedia && draggedExistingMedia !== targetCard) {
                 const cards = Array.from(targetCard.parentNode.children);
-                const sourceIndex = cards.indexOf(draggedExistingImage);
+                const sourceIndex = cards.indexOf(draggedExistingMedia);
                 const targetIndex = cards.indexOf(targetCard);
 
                 targetCard.parentNode.insertBefore(
-                    draggedExistingImage,
+                    draggedExistingMedia,
                     sourceIndex < targetIndex ? targetCard.nextElementSibling : targetCard
                 );
-                syncExistingImageOrder();
+                syncExistingMediaOrder();
             }
-            if (draggedExistingImage) draggedExistingImage.classList.remove('opacity-50');
-            draggedExistingImage = null;
+            if (draggedExistingMedia) draggedExistingMedia.classList.remove('opacity-50');
+            draggedExistingMedia = null;
         }
 
-        function endExistingImageDrag(card) {
+        function endExistingMediaDrag(card) {
             card.classList.remove('opacity-50');
-            draggedExistingImage = null;
+            draggedExistingMedia = null;
         }
 
-        function moveExistingImage(card, direction) {
+        function moveExistingMedia(card, direction) {
             const sibling = direction < 0 ? card.previousElementSibling : card.nextElementSibling;
             if (!sibling) return;
 
             card.parentNode.insertBefore(card, direction < 0 ? sibling : sibling.nextElementSibling);
-            syncExistingImageOrder();
+            syncExistingMediaOrder();
         }
-
-        function previewImages(input) {
-            const existingImages = new Set(selectedImages.map(image => `${image.name}-${image.size}-${image.lastModified}`));
-            Array.from(input.files).forEach((image) => {
-                const imageKey = `${image.name}-${image.size}-${image.lastModified}`;
-                if (!existingImages.has(imageKey)) {
-                    selectedImages.push(image);
-                    existingImages.add(imageKey);
-                }
-            });
-            syncSelectedImageInput();
-            renderImagePreviews();
-        }
-
-        function removeSelectedImage(index) {
-            selectedImages.splice(index, 1);
-            syncSelectedImageInput();
-            renderImagePreviews();
-        }
-
-        function syncSelectedImageInput() {
-            const dataTransfer = new DataTransfer();
-            selectedImages.forEach((image) => dataTransfer.items.add(image));
-            document.getElementById('images').files = dataTransfer.files;
-        }
-
-        function renderImagePreviews() {
-            const preview = document.getElementById('image-preview');
-            preview.innerHTML = '';
-
-            selectedImages.forEach((file, index) => {
-                const card = document.createElement('div');
-                card.className = 'relative rounded-lg border border-gray-200 bg-gray-50 p-2';
-
-                const image = document.createElement('img');
-                image.src = URL.createObjectURL(file);
-                image.alt = `Neue Bildvorschau ${index + 1}`;
-                image.className = 'w-full h-32 object-cover rounded-md';
-
-                const removeButton = document.createElement('button');
-                removeButton.type = 'button';
-                removeButton.className = 'w-full mt-2 px-2 py-1 text-sm text-red-600 border border-red-200 rounded hover:bg-red-50';
-                removeButton.textContent = 'Aus Auswahl entfernen';
-                removeButton.addEventListener('click', () => removeSelectedImage(index));
-
-                card.append(image, removeButton);
-                preview.appendChild(card);
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', syncExistingImageOrder);
 
         function deleteImage(imageId, token) {
             if (!confirm('Bild wirklich löschen?')) {
@@ -257,6 +258,171 @@
             .catch(error => {
                 console.error('Error:', error);
                 alert('Fehler beim Löschen des Bildes.');
+            });
+        }
+
+        function deleteVideo(videoId, token) {
+            if (!confirm('Video wirklich löschen?')) {
+                return;
+            }
+
+            fetch('/admin/videos/' + videoId, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Fehler beim Löschen des Videos.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Fehler beim Löschen des Videos.');
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            syncExistingMediaOrder();
+        });
+
+        // --- New media (not yet uploaded) selection, ordering & preview ---
+        let selectedMedia = []; // { type: 'image'|'video', file: File }
+        let draggedMediaIndex = null;
+
+        function handleMediaInput(input) {
+            const existingKeys = new Set(selectedMedia.map(item => `${item.file.name}-${item.file.size}-${item.file.lastModified}`));
+            Array.from(input.files).forEach((file) => {
+                const key = `${file.name}-${file.size}-${file.lastModified}`;
+                if (!existingKeys.has(key)) {
+                    selectedMedia.push({ type: file.type.startsWith('video/') ? 'video' : 'image', file });
+                    existingKeys.add(key);
+                }
+            });
+            input.value = '';
+            syncMediaInputs();
+            renderMediaPreviews();
+        }
+
+        function moveMedia(fromIndex, toIndex) {
+            if (toIndex < 0 || toIndex >= selectedMedia.length || fromIndex === toIndex) {
+                return;
+            }
+
+            const [item] = selectedMedia.splice(fromIndex, 1);
+            selectedMedia.splice(toIndex, 0, item);
+            syncMediaInputs();
+            renderMediaPreviews();
+        }
+
+        function removeSelectedMedia(index) {
+            selectedMedia.splice(index, 1);
+            syncMediaInputs();
+            renderMediaPreviews();
+        }
+
+        function syncMediaInputs() {
+            const imageTransfer = new DataTransfer();
+            const videoTransfer = new DataTransfer();
+
+            selectedMedia.forEach((item) => {
+                if (item.type === 'image') {
+                    imageTransfer.items.add(item.file);
+                } else {
+                    videoTransfer.items.add(item.file);
+                }
+            });
+
+            document.getElementById('images').files = imageTransfer.files;
+            document.getElementById('videos').files = videoTransfer.files;
+
+            const orderContainer = document.getElementById('media-type-order');
+            orderContainer.innerHTML = '';
+            selectedMedia.forEach((item) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'media_type_order[]';
+                input.value = item.type;
+                orderContainer.appendChild(input);
+            });
+        }
+
+        function renderMediaPreviews() {
+            const preview = document.getElementById('media-preview');
+            preview.innerHTML = '';
+
+            selectedMedia.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'relative rounded-lg border border-gray-200 bg-gray-50 p-2 cursor-move';
+                card.draggable = true;
+
+                card.addEventListener('dragstart', () => {
+                    draggedMediaIndex = index;
+                    card.classList.add('opacity-50');
+                });
+                card.addEventListener('dragend', () => {
+                    draggedMediaIndex = null;
+                    card.classList.remove('opacity-50');
+                });
+                card.addEventListener('dragover', (event) => event.preventDefault());
+                card.addEventListener('drop', (event) => {
+                    event.preventDefault();
+                    if (draggedMediaIndex !== null) {
+                        moveMedia(draggedMediaIndex, index);
+                    }
+                });
+
+                let mediaEl;
+                if (item.type === 'image') {
+                    mediaEl = document.createElement('img');
+                    mediaEl.src = URL.createObjectURL(item.file);
+                    mediaEl.alt = `Neue Bildvorschau ${index + 1}`;
+                    mediaEl.className = 'w-full h-32 object-cover rounded-md';
+                } else {
+                    mediaEl = document.createElement('video');
+                    mediaEl.src = URL.createObjectURL(item.file);
+                    mediaEl.className = 'w-full h-32 object-cover rounded-md';
+                    mediaEl.muted = true;
+                    mediaEl.controls = true;
+                }
+
+                const badge = document.createElement('span');
+                badge.className = 'absolute top-3 left-3 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded';
+                badge.textContent = item.type === 'video' ? 'Video' : 'Bild';
+
+                const controls = document.createElement('div');
+                controls.className = 'flex gap-2 mt-2';
+
+                const moveLeft = document.createElement('button');
+                moveLeft.type = 'button';
+                moveLeft.className = 'flex-1 px-2 py-1 text-sm border border-gray-300 rounded hover:bg-white disabled:opacity-40';
+                moveLeft.textContent = '←';
+                moveLeft.title = 'Nach links verschieben';
+                moveLeft.disabled = index === 0;
+                moveLeft.addEventListener('click', () => moveMedia(index, index - 1));
+
+                const moveRight = document.createElement('button');
+                moveRight.type = 'button';
+                moveRight.className = 'flex-1 px-2 py-1 text-sm border border-gray-300 rounded hover:bg-white disabled:opacity-40';
+                moveRight.textContent = '→';
+                moveRight.title = 'Nach rechts verschieben';
+                moveRight.disabled = index === selectedMedia.length - 1;
+                moveRight.addEventListener('click', () => moveMedia(index, index + 1));
+
+                const removeButton = document.createElement('button');
+                removeButton.type = 'button';
+                removeButton.className = 'px-2 py-1 text-sm text-red-600 border border-red-200 rounded hover:bg-red-50';
+                removeButton.textContent = 'Löschen';
+                removeButton.title = 'Aus Auswahl entfernen';
+                removeButton.addEventListener('click', () => removeSelectedMedia(index));
+
+                controls.append(moveLeft, moveRight, removeButton);
+                card.append(mediaEl, badge, controls);
+                preview.appendChild(card);
             });
         }
     </script>

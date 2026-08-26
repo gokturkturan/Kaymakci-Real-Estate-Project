@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Property;
 use App\Models\PropertyImage;
+use App\Models\PropertyVideo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -32,8 +33,15 @@ class PropertyController extends Controller
             'bedrooms' => 'required|integer|min:0',
             'bathrooms' => 'required|integer|min:0',
             'area' => 'required|numeric|min:0',
+            'king_size_bed_count' => 'required|integer|min:0',
+            'single_bed_count' => 'required|integer|min:0',
             'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
+            'videos.*' => 'file|mimes:mp4,mov,webm|max:102400',
+            'media_type_order' => 'nullable|array',
+            'media_type_order.*' => 'in:image,video',
         ]);
+
+        $validated['has_parking'] = $request->boolean('has_parking');
 
         $coordinates = $this->geocodeAddress($validated['location']);
         if ($coordinates) {
@@ -42,16 +50,7 @@ class PropertyController extends Controller
 
         $property = Property::create($validated);
 
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $index => $image) {
-                $path = $image->store('properties', 'public');
-                PropertyImage::create([
-                    'property_id' => $property->id,
-                    'url' => '/storage/' . $path,
-                    'order' => $index,
-                ]);
-            }
-        }
+        $this->storeNewMedia($request, $property, 0);
 
         return redirect()->route('admin.properties.index')
             ->with('success', 'Immobilie wurde erfolgreich erstellt.');
@@ -59,7 +58,7 @@ class PropertyController extends Controller
 
     public function edit(Property $property)
     {
-        $property->load('images');
+        $property->load('images', 'videos');
         return view('admin.properties.edit', compact('property'));
     }
 
@@ -73,10 +72,17 @@ class PropertyController extends Controller
             'bedrooms' => 'required|integer|min:0',
             'bathrooms' => 'required|integer|min:0',
             'area' => 'required|numeric|min:0',
-            'image_order' => 'nullable|array',
-            'image_order.*' => 'integer',
+            'king_size_bed_count' => 'required|integer|min:0',
+            'single_bed_count' => 'required|integer|min:0',
+            'media_order' => 'nullable|array',
+            'media_order.*' => 'string',
             'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
+            'videos.*' => 'file|mimes:mp4,mov,webm|max:102400',
+            'media_type_order' => 'nullable|array',
+            'media_type_order.*' => 'in:image,video',
         ]);
+
+        $validated['has_parking'] = $request->boolean('has_parking');
 
         if ($property->location !== $validated['location'] || $property->latitude === null || $property->longitude === null) {
             $coordinates = $this->geocodeAddress($validated['location']);
@@ -85,40 +91,74 @@ class PropertyController extends Controller
 
         $property->update($validated);
 
-        if (!empty($validated['image_order'])) {
-            $orderedIds = collect($validated['image_order'])
-                ->map(fn($imageId) => (int) $imageId)
-                ->unique()
-                ->values();
-            $existingImages = $property->images()->get()->keyBy('id');
-            $order = 0;
+        $nextOrder = 0;
 
-            foreach ($orderedIds as $imageId) {
-                if ($existingImages->has($imageId)) {
-                    $existingImages[$imageId]->update(['order' => $order++]);
-                    $existingImages->forget($imageId);
+        if (!empty($validated['media_order'])) {
+            $existingImages = $property->images()->get()->keyBy('id');
+            $existingVideos = $property->videos()->get()->keyBy('id');
+
+            foreach (collect($validated['media_order'])->unique() as $token) {
+                [$type, $id] = array_pad(explode('-', $token, 2), 2, null);
+                $id = (int) $id;
+
+                if ($type === 'image' && $existingImages->has($id)) {
+                    $existingImages[$id]->update(['order' => $nextOrder++]);
+                    $existingImages->forget($id);
+                } elseif ($type === 'video' && $existingVideos->has($id)) {
+                    $existingVideos[$id]->update(['order' => $nextOrder++]);
+                    $existingVideos->forget($id);
                 }
             }
 
             foreach ($existingImages as $image) {
-                $image->update(['order' => $order++]);
+                $image->update(['order' => $nextOrder++]);
             }
+
+            foreach ($existingVideos as $video) {
+                $video->update(['order' => $nextOrder++]);
+            }
+        } else {
+            $nextOrder = max($property->images()->max('order') ?? -1, $property->videos()->max('order') ?? -1) + 1;
         }
 
-        if ($request->hasFile('images')) {
-            $maxOrder = $property->images()->max('order') ?? -1;
-            foreach ($request->file('images') as $index => $image) {
-                $path = $image->store('properties', 'public');
-                PropertyImage::create([
-                    'property_id' => $property->id,
-                    'url' => '/storage/' . $path,
-                    'order' => $maxOrder + $index + 1,
-                ]);
-            }
-        }
+        $this->storeNewMedia($request, $property, $nextOrder);
 
         return redirect()->route('admin.properties.index')
             ->with('success', 'Immobilie wurde erfolgreich aktualisiert.');
+    }
+
+    private function storeNewMedia(Request $request, Property $property, int $order): void
+    {
+        $images = $request->file('images', []);
+        $videos = $request->file('videos', []);
+        $typeOrder = $request->input('media_type_order', []);
+
+        if (empty($typeOrder)) {
+            $typeOrder = array_merge(array_fill(0, count($images), 'image'), array_fill(0, count($videos), 'video'));
+        }
+
+        $imageIndex = 0;
+        $videoIndex = 0;
+
+        foreach ($typeOrder as $type) {
+            if ($type === 'image' && isset($images[$imageIndex])) {
+                $path = $images[$imageIndex]->store('properties', 'public');
+                PropertyImage::create([
+                    'property_id' => $property->id,
+                    'url' => '/storage/' . $path,
+                    'order' => $order++,
+                ]);
+                $imageIndex++;
+            } elseif ($type === 'video' && isset($videos[$videoIndex])) {
+                $path = $videos[$videoIndex]->store('property-videos', 'public');
+                PropertyVideo::create([
+                    'property_id' => $property->id,
+                    'url' => '/storage/' . $path,
+                    'order' => $order++,
+                ]);
+                $videoIndex++;
+            }
+        }
     }
 
     public function destroy(Property $property)
@@ -126,6 +166,12 @@ class PropertyController extends Controller
         // Delete associated images from storage
         foreach ($property->images as $image) {
             $path = str_replace('/storage/', '', $image->url);
+            Storage::disk('public')->delete($path);
+        }
+
+        // Delete associated videos from storage
+        foreach ($property->videos as $video) {
+            $path = str_replace('/storage/', '', $video->url);
             Storage::disk('public')->delete($path);
         }
 
@@ -146,6 +192,19 @@ class PropertyController extends Controller
         }
 
         return back()->with('success', 'Bild wurde erfolgreich gelöscht.');
+    }
+
+    public function deleteVideo(PropertyVideo $video)
+    {
+        $path = str_replace('/storage/', '', $video->url);
+        Storage::disk('public')->delete($path);
+        $video->delete();
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json(['success' => true]);
+        }
+
+        return back()->with('success', 'Video wurde erfolgreich gelöscht.');
     }
 
     private function geocodeAddress(string $address): ?array

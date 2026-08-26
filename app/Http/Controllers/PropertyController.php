@@ -14,7 +14,7 @@ class PropertyController extends Controller
 
     public function show(Property $property)
     {
-        $property->load('images');
+        $property->load('images', 'videos');
         return view('properties.show', compact('property'));
     }
 }

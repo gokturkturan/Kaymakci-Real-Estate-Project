@@ -104,31 +104,44 @@ if ($property->first_image) {
         </nav>
 
         <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            {{-- Image Gallery --}}
-            @if($property->images->count() > 0)
-                <div class="relative" x-data="{ currentSlide: 0, totalSlides: {{ $property->images->count() }} }">
-                    {{-- Main Image --}}
+            {{-- Media Gallery (images + videos combined, in admin-defined order) --}}
+            @php
+                $media = $property->media;
+            @endphp
+            @if($media->count() > 0)
+                <div class="relative" id="property-gallery" x-data="{ currentSlide: 0, totalSlides: {{ $media->count() }} }" x-effect="currentSlide, pauseInactiveVideos($el, currentSlide)">
+                    {{-- Main Media --}}
                     <div class="aspect-video bg-gray-200 overflow-hidden relative">
-                        @foreach($property->images as $index => $image)
-                            <img src="{{ $image->url }}"
-                                 alt="{{ $property->title }} - Bild {{ $index + 1 }}"
-                                 class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
-                                 :class="currentSlide === {{ $index }} ? 'opacity-100' : 'opacity-0'"
-                                 @if($index === 0) itemprop="image" @endif>
+                        @foreach($media as $index => $item)
+                            @if($item['type'] === 'image')
+                                <img src="{{ $item['url'] }}"
+                                     alt="{{ $property->title }} - Bild {{ $index + 1 }}"
+                                     class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+                                     :class="currentSlide === {{ $index }} ? 'opacity-100' : 'opacity-0'"
+                                     @if($index === 0) itemprop="image" @endif>
+                            @else
+                                <video src="{{ $item['url'] }}"
+                                       class="gallery-slide absolute inset-0 w-full h-full object-contain bg-black transition-opacity duration-300"
+                                       :class="currentSlide === {{ $index }} ? 'opacity-100' : 'opacity-0 pointer-events-none'"
+                                       data-type="video" data-index="{{ $index }}"
+                                       controls preload="metadata" playsinline>
+                                    Ihr Browser unterstützt das Video-Tag nicht.
+                                </video>
+                            @endif
                         @endforeach
 
                         {{-- Navigation Arrows --}}
-                        @if($property->images->count() > 1)
+                        @if($media->count() > 1)
                             <button @click="currentSlide = (currentSlide - 1 + totalSlides) % totalSlides"
                                     class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition"
-                                    aria-label="Vorheriges Bild">
+                                    aria-label="Vorheriges Medium">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                 </svg>
                             </button>
                             <button @click="currentSlide = (currentSlide + 1) % totalSlides"
                                     class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition"
-                                    aria-label="Nächstes Bild">
+                                    aria-label="Nächstes Medium">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                 </svg>
@@ -136,24 +149,43 @@ if ($property->first_image) {
 
                             {{-- Counter --}}
                             <div class="absolute bottom-4 right-4 bg-black/60 text-white text-sm px-3 py-1 rounded-full">
-                                <span x-text="currentSlide + 1"></span> / {{ $property->images->count() }}
+                                <span x-text="currentSlide + 1"></span> / {{ $media->count() }}
                             </div>
                         @endif
                     </div>
 
                     {{-- Thumbnail Navigation --}}
-                    @if($property->images->count() > 1)
+                    @if($media->count() > 1)
                         <div class="flex gap-2 p-4 bg-gray-100 overflow-x-auto">
-                            @foreach($property->images as $index => $image)
+                            @foreach($media as $index => $item)
                                 <button @click="currentSlide = {{ $index }}"
-                                        class="flex-shrink-0 w-20 h-14 rounded overflow-hidden border-2 transition"
+                                        class="relative flex-shrink-0 w-20 h-14 rounded overflow-hidden border-2 transition"
                                         :class="currentSlide === {{ $index }} ? 'border-blue-600' : 'border-transparent hover:border-gray-300'">
-                                    <img src="{{ $image->url }}" alt="Thumbnail {{ $index + 1 }}" class="w-full h-full object-cover">
+                                    @if($item['type'] === 'image')
+                                        <img src="{{ $item['url'] }}" alt="Thumbnail {{ $index + 1 }}" class="w-full h-full object-cover">
+                                    @else
+                                        <video src="{{ $item['url'] }}" class="w-full h-full object-cover pointer-events-none" muted preload="metadata"></video>
+                                        <span class="absolute inset-0 flex items-center justify-center bg-black/30">
+                                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M6.3 3.7a1 1 0 011.03-.05l9 5.5a1 1 0 010 1.7l-9 5.5A1 1 0 016 15.5v-11a1 1 0 01.3-.8z"/>
+                                            </svg>
+                                        </span>
+                                    @endif
                                 </button>
                             @endforeach
                         </div>
                     @endif
                 </div>
+                <script>
+                    function pauseInactiveVideos(container, activeIndex) {
+                        if (!container) return;
+                        container.querySelectorAll('.gallery-slide[data-type="video"]').forEach((video) => {
+                            if (parseInt(video.dataset.index, 10) !== activeIndex) {
+                                video.pause();
+                            }
+                        });
+                    }
+                </script>
             @else
                 <figure class="aspect-video bg-gray-200 overflow-hidden">
                     <div class="w-full h-full flex items-center justify-center text-gray-400" aria-label="Kein Bild verfügbar">
@@ -181,7 +213,7 @@ if ($property->first_image) {
                     </p>
                 </header>
 
-                <section class="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg mb-8" aria-label="Immobilien-Eigenschaften">
+                <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 p-4 bg-gray-50 rounded-lg mb-8" aria-label="Immobilien-Eigenschaften">
                     <div class="text-center">
                         <p class="text-2xl font-bold text-gray-900" itemprop="numberOfRooms">{{ $property->bedrooms }}</p>
                         <p class="text-sm text-gray-500">Zimmer</p>
@@ -195,6 +227,24 @@ if ($property->first_image) {
                         <p class="text-sm text-gray-500">m²</p>
                         <meta itemprop="floorSize" content="{{ $property->area }} MTK">
                     </div>
+                    @if($property->king_size_bed_count > 0)
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-gray-900">{{ $property->king_size_bed_count }}</p>
+                            <p class="text-sm text-gray-500">King Size Bett{{ $property->king_size_bed_count > 1 ? 'en' : '' }}</p>
+                        </div>
+                    @endif
+                    @if($property->single_bed_count > 0)
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-gray-900">{{ $property->single_bed_count }}</p>
+                            <p class="text-sm text-gray-500">Einzelbett{{ $property->single_bed_count > 1 ? 'en' : '' }}</p>
+                        </div>
+                    @endif
+                    @if($property->has_parking)
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-gray-900">Ja</p>
+                            <p class="text-sm text-gray-500">Parkplatz</p>
+                        </div>
+                    @endif
                 </section>
 
                 <section aria-labelledby="description-title">

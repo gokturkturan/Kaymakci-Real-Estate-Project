@@ -28,6 +28,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('admin')->group(function () {
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
         Route::delete('/images/{image}', [AdminPropertyController::class, 'deleteImage'])->name('properties.image.delete');
+        Route::delete('/videos/{video}', [AdminPropertyController::class, 'deleteVideo'])->name('properties.video.delete');
         Route::resource('properties', AdminPropertyController::class)->except(['show']);
 
         // Bookings
