@@ -1,14 +1,20 @@
 @extends('layouts.app')
 
-@section('title', $property->title . ' | ' . $property->bedrooms . ' Zimmer ' . $property->area . 'm² in ' . $property->location . ' | Kaymakci Real Estate GmbH')
+@php
+    $decimalSep = app()->getLocale() === 'de' ? ',' : '.';
+    $thousandSep = app()->getLocale() === 'de' ? '.' : ',';
+    $priceFormatted = number_format($property->price, 2, $decimalSep, $thousandSep);
+@endphp
 
-@section('meta_description', $property->title . ' zur möblierten Vermietung in ' . $property->location . '. ' . $property->bedrooms . ' Zimmer, ' . $property->bathrooms . ' Bad, ' . $property->area . ' m² ab ' . number_format($property->price, 2, ',', '.') . ' € pro Person und Nacht. ' . Str::limit($property->description, 100))
+@section('title', __('property.meta_title', ['title' => $property->localized_title, 'bedrooms' => $property->bedrooms, 'area' => $property->area, 'location' => $property->location]))
 
-@section('meta_keywords', $property->title . ', ' . $property->location . ', möblierte Wohnung mieten, Wohnen auf Zeit, ' . $property->bedrooms . ' Zimmer Wohnung, Kaymakci Real Estate GmbH')
+@section('meta_description', __('property.meta_description', ['title' => $property->localized_title, 'location' => $property->location, 'bedrooms' => $property->bedrooms, 'bathrooms' => $property->bathrooms, 'area' => $property->area, 'price' => $priceFormatted, 'excerpt' => Str::limit($property->localized_description, 100)]))
+
+@section('meta_keywords', __('property.meta_keywords', ['title' => $property->localized_title, 'location' => $property->location, 'bedrooms' => $property->bedrooms]))
 
 @section('og_type', 'product')
-@section('og_title', $property->title . ' - ' . number_format($property->price, 2, ',', '.') . ' € pro Person/Nacht | Kaymakci Real Estate GmbH')
-@section('og_description', $property->bedrooms . ' Zimmer, ' . $property->bathrooms . ' Bad, ' . $property->area . ' m² in ' . $property->location)
+@section('og_title', __('property.og_title', ['title' => $property->localized_title, 'price' => $priceFormatted]))
+@section('og_description', __('property.og_description', ['bedrooms' => $property->bedrooms, 'bathrooms' => $property->bathrooms, 'area' => $property->area, 'location' => $property->location]))
 @section('og_image', $property->first_image ?? asset('images/og-default.jpg'))
 @section('twitter_image', $property->first_image ?? asset('images/og-default.jpg'))
 
@@ -17,8 +23,8 @@
 $realEstateListing = [
     '@context' => 'https://schema.org',
     '@type' => 'RealEstateListing',
-    'name' => $property->title,
-    'description' => $property->description,
+    'name' => $property->localized_title,
+    'description' => $property->localized_description,
     'url' => route('properties.show', $property),
     'datePosted' => $property->created_at->toIso8601String(),
     'offers' => [
@@ -29,7 +35,7 @@ $realEstateListing = [
             '@type' => 'UnitPriceSpecification',
             'price' => $property->price,
             'priceCurrency' => 'EUR',
-            'unitText' => 'Person pro Nacht'
+            'unitText' => __('property.schema_unit_text')
         ],
         'availability' => 'https://schema.org/InStock'
     ],
@@ -54,17 +60,17 @@ $breadcrumb = [
     '@context' => 'https://schema.org',
     '@type' => 'BreadcrumbList',
     'itemListElement' => [
-        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Startseite', 'item' => url('/')],
-        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Immobilienangebote', 'item' => route('properties.index')],
-        ['@type' => 'ListItem', 'position' => 3, 'name' => $property->title, 'item' => route('properties.show', $property)]
+        ['@type' => 'ListItem', 'position' => 1, 'name' => __('property.schema_home'), 'item' => url('/')],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => __('property.schema_listings'), 'item' => route('properties.index')],
+        ['@type' => 'ListItem', 'position' => 3, 'name' => $property->localized_title, 'item' => route('properties.show', $property)]
     ]
 ];
 
 $product = [
     '@context' => 'https://schema.org',
     '@type' => 'Product',
-    'name' => $property->title,
-    'description' => Str::limit($property->description, 200),
+    'name' => $property->localized_title,
+    'description' => Str::limit($property->localized_description, 200),
     'brand' => ['@type' => 'Brand', 'name' => 'Kaymakci Real Estate GmbH'],
     'offers' => [
         '@type' => 'Offer',
@@ -75,7 +81,7 @@ $product = [
             '@type' => 'UnitPriceSpecification',
             'price' => $property->price,
             'priceCurrency' => 'EUR',
-            'unitText' => 'Person pro Nacht'
+            'unitText' => __('property.schema_unit_text')
         ],
         'availability' => 'https://schema.org/InStock',
         'seller' => ['@type' => 'RealEstateAgent', 'name' => 'Kaymakci Real Estate GmbH']
@@ -95,11 +101,11 @@ if ($property->first_image) {
 
         <nav class="mb-6" aria-label="Breadcrumb">
             <ol class="flex items-center gap-2 text-sm text-gray-500">
-                <li><a href="{{ route('properties.index') }}" class="hover:text-blue-600 transition">Startseite</a></li>
+                <li><a href="{{ route('properties.index') }}" class="hover:text-blue-600 transition">{{ __('property.breadcrumb_home') }}</a></li>
                 <li><span aria-hidden="true">/</span></li>
-                <li><a href="{{ route('properties.index') }}" class="hover:text-blue-600 transition">Angebote</a></li>
+                <li><a href="{{ route('properties.index') }}" class="hover:text-blue-600 transition">{{ __('property.breadcrumb_listings') }}</a></li>
                 <li><span aria-hidden="true">/</span></li>
-                <li class="text-gray-900 font-medium" aria-current="page">{{ Str::limit($property->title, 30) }}</li>
+                <li class="text-gray-900 font-medium" aria-current="page">{{ Str::limit($property->localized_title, 30) }}</li>
             </ol>
         </nav>
 
@@ -115,7 +121,7 @@ if ($property->first_image) {
                         @foreach($media as $index => $item)
                             @if($item['type'] === 'image')
                                 <img src="{{ $item['url'] }}"
-                                     alt="{{ $property->title }} - Bild {{ $index + 1 }}"
+                                     alt="{{ __('property.gallery_image_alt', ['title' => $property->localized_title, 'index' => $index + 1]) }}"
                                      class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
                                      :class="currentSlide === {{ $index }} ? 'opacity-100' : 'opacity-0'"
                                      @if($index === 0) itemprop="image" @endif>
@@ -125,7 +131,7 @@ if ($property->first_image) {
                                        :class="currentSlide === {{ $index }} ? 'opacity-100' : 'opacity-0 pointer-events-none'"
                                        data-type="video" data-index="{{ $index }}"
                                        controls preload="metadata" playsinline>
-                                    Ihr Browser unterstützt das Video-Tag nicht.
+                                    {{ __('property.gallery_video_unsupported') }}
                                 </video>
                             @endif
                         @endforeach
@@ -134,14 +140,14 @@ if ($property->first_image) {
                         @if($media->count() > 1)
                             <button @click="currentSlide = (currentSlide - 1 + totalSlides) % totalSlides"
                                     class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition"
-                                    aria-label="Vorheriges Medium">
+                                    aria-label="{{ __('property.gallery_prev_aria') }}">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                 </svg>
                             </button>
                             <button @click="currentSlide = (currentSlide + 1) % totalSlides"
                                     class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition"
-                                    aria-label="Nächstes Medium">
+                                    aria-label="{{ __('property.gallery_next_aria') }}">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                 </svg>
@@ -162,7 +168,7 @@ if ($property->first_image) {
                                         class="relative flex-shrink-0 w-20 h-14 rounded overflow-hidden border-2 transition"
                                         :class="currentSlide === {{ $index }} ? 'border-blue-600' : 'border-transparent hover:border-gray-300'">
                                     @if($item['type'] === 'image')
-                                        <img src="{{ $item['url'] }}" alt="Thumbnail {{ $index + 1 }}" class="w-full h-full object-cover">
+                                        <img src="{{ $item['url'] }}" alt="{{ __('property.gallery_thumbnail_alt', ['index' => $index + 1]) }}" class="w-full h-full object-cover">
                                     @else
                                         <video src="{{ $item['url'] }}" class="w-full h-full object-cover pointer-events-none" muted preload="metadata"></video>
                                         <span class="absolute inset-0 flex items-center justify-center bg-black/30">
@@ -188,7 +194,7 @@ if ($property->first_image) {
                 </script>
             @else
                 <figure class="aspect-video bg-gray-200 overflow-hidden">
-                    <div class="w-full h-full flex items-center justify-center text-gray-400" aria-label="Kein Bild verfügbar">
+                    <div class="w-full h-full flex items-center justify-center text-gray-400" aria-label="{{ __('property.gallery_no_image') }}">
                         <svg class="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 22V12h6v10"/>
@@ -200,27 +206,27 @@ if ($property->first_image) {
             <div class="p-8">
                 <header class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900" itemprop="name">{{ $property->title }}</h1>
+                        <h1 class="text-3xl font-bold text-gray-900" itemprop="name">{{ $property->localized_title }}</h1>
                         <p class="text-gray-500 mt-1" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
                             <span itemprop="addressLocality">{{ $property->location }}</span>
                         </p>
                     </div>
                     <p class="text-3xl font-bold text-blue-600 whitespace-nowrap" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
-                        <span itemprop="price" content="{{ $property->price }}">{{ number_format($property->price, 2, ',', '.') }}</span>
+                        <span itemprop="price" content="{{ $property->price }}">{{ $priceFormatted }}</span>
                         <span itemprop="priceCurrency" content="EUR">€</span>
-                        <span class="block text-sm font-medium text-gray-500">pro Person / Nacht</span>
+                        <span class="block text-sm font-medium text-gray-500">{{ __('property.price_suffix_per_person_night') }}</span>
                         <meta itemprop="availability" content="https://schema.org/InStock">
                     </p>
                 </header>
 
-                <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 p-4 bg-gray-50 rounded-lg mb-8" aria-label="Immobilien-Eigenschaften">
+                <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 p-4 bg-gray-50 rounded-lg mb-8" aria-label="{{ __('property.stats_aria_label') }}">
                     <div class="text-center">
                         <p class="text-2xl font-bold text-gray-900" itemprop="numberOfRooms">{{ $property->bedrooms }}</p>
-                        <p class="text-sm text-gray-500">Zimmer</p>
+                        <p class="text-sm text-gray-500">{{ __('property.stats_rooms') }}</p>
                     </div>
                     <div class="text-center">
                         <p class="text-2xl font-bold text-gray-900" itemprop="numberOfBathroomsTotal">{{ $property->bathrooms }}</p>
-                        <p class="text-sm text-gray-500">Bad</p>
+                        <p class="text-sm text-gray-500">{{ __('property.stats_bath') }}</p>
                     </div>
                     <div class="text-center">
                         <p class="text-2xl font-bold text-gray-900">{{ $property->area }}</p>
@@ -230,32 +236,32 @@ if ($property->first_image) {
                     @if($property->king_size_bed_count > 0)
                         <div class="text-center">
                             <p class="text-2xl font-bold text-gray-900">{{ $property->king_size_bed_count }}</p>
-                            <p class="text-sm text-gray-500">King Size Bett{{ $property->king_size_bed_count > 1 ? 'en' : '' }}</p>
+                            <p class="text-sm text-gray-500">{{ $property->king_size_bed_count > 1 ? __('property.stats_king_size_beds') : __('property.stats_king_size_bed') }}</p>
                         </div>
                     @endif
                     @if($property->single_bed_count > 0)
                         <div class="text-center">
                             <p class="text-2xl font-bold text-gray-900">{{ $property->single_bed_count }}</p>
-                            <p class="text-sm text-gray-500">Einzelbett{{ $property->single_bed_count > 1 ? 'en' : '' }}</p>
+                            <p class="text-sm text-gray-500">{{ $property->single_bed_count > 1 ? __('property.stats_single_beds') : __('property.stats_single_bed') }}</p>
                         </div>
                     @endif
                     <div class="text-center">
-                        <p class="text-2xl font-bold text-gray-900">{{ $property->has_parking ? 'Ja' : 'Nein' }}</p>
-                        <p class="text-sm text-gray-500">Parkplatz</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ $property->has_parking ? __('property.stats_yes') : __('property.stats_no') }}</p>
+                        <p class="text-sm text-gray-500">{{ __('property.stats_parking') }}</p>
                     </div>
                 </section>
 
                 <section aria-labelledby="description-title">
-                    <h2 id="description-title" class="text-xl font-semibold text-gray-900 mb-3">Objektbeschreibung</h2>
-                    <div class="text-gray-600 leading-relaxed whitespace-pre-line" itemprop="description">{{ $property->description }}</div>
+                    <h2 id="description-title" class="text-xl font-semibold text-gray-900 mb-3">{{ __('property.description_heading') }}</h2>
+                    <div class="text-gray-600 leading-relaxed whitespace-pre-line" itemprop="description">{{ $property->localized_description }}</div>
                 </section>
 
                 @if($property->latitude !== null && $property->longitude !== null)
                     <section class="mt-8" aria-labelledby="map-title">
-                        <h2 id="map-title" class="text-xl font-semibold text-gray-900 mb-3">Lage</h2>
+                        <h2 id="map-title" class="text-xl font-semibold text-gray-900 mb-3">{{ __('property.map_heading') }}</h2>
                         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-                        <div id="property-map" class="h-96 rounded-lg border border-gray-200" aria-label="Satellitenkarte: {{ $property->location }}"></div>
-                        <p class="text-xs text-gray-500 mt-2">Kartendaten: OpenStreetMap · Satellitenbilder: Esri</p>
+                        <div id="property-map" class="h-96 rounded-lg border border-gray-200" aria-label="{{ __('property.map_aria_label', ['location' => $property->location]) }}"></div>
+                        <p class="text-xs text-gray-500 mt-2">{{ __('property.map_attribution') }}</p>
                         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
@@ -272,7 +278,7 @@ if ($property->first_image) {
                                 satellite.addTo(map);
                                 streets.addTo(map);
                                 L.marker(coordinates).addTo(map).bindPopup(@js($property->location));
-                                L.control.layers({ Satellit: satellite, Karte: streets }).addTo(map);
+                                L.control.layers({ {{ Illuminate\Support\Js::from(__('property.map_layer_satellite')) }}: satellite, {{ Illuminate\Support\Js::from(__('property.map_layer_streets')) }}: streets }).addTo(map);
                             });
                         </script>
                     </section>
@@ -321,7 +327,7 @@ if ($property->first_image) {
                         },
 
                         formatPrice(price) {
-                            return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price);
+                            return new Intl.NumberFormat({{ Illuminate\Support\Js::from(app()->getLocale() === 'de' ? 'de-DE' : 'en-GB') }}, { style: 'currency', currency: 'EUR' }).format(price);
                         },
 
                         async init() {
@@ -345,7 +351,7 @@ if ($property->first_image) {
                             const today = new Date().toISOString().split('T')[0];
 
                             this.checkInPicker = flatpickr('#check_in', {
-                                locale: 'de',
+                                locale: {{ Illuminate\Support\Js::from(app()->getLocale() === 'de' ? 'de' : 'default') }},
                                 dateFormat: 'Y-m-d',
                                 minDate: today,
                                 disable: this.bookedDates,
@@ -365,7 +371,7 @@ if ($property->first_image) {
                             });
 
                             this.checkOutPicker = flatpickr('#check_out', {
-                                locale: 'de',
+                                locale: {{ Illuminate\Support\Js::from(app()->getLocale() === 'de' ? 'de' : 'default') }},
                                 dateFormat: 'Y-m-d',
                                 minDate: today,
                                 disable: this.bookedDates,
@@ -393,7 +399,7 @@ if ($property->first_image) {
                             const checkOutDate = new Date(this.checkOut);
 
                             if (checkOutDate <= checkInDate) {
-                                this.dateError = 'Check-out muss nach Check-in liegen.';
+                                this.dateError = {{ Illuminate\Support\Js::from(__('property.booking_js_checkout_after_checkin')) }};
                                 return;
                             }
 
@@ -406,7 +412,7 @@ if ($property->first_image) {
                             while (current < checkOutDate) {
                                 const dateStr = current.toISOString().split('T')[0];
                                 if (this.bookedDates.includes(dateStr)) {
-                                    this.dateError = 'Die gewählten Daten überschneiden sich mit einer bestehenden Buchung.';
+                                    this.dateError = {{ Illuminate\Support\Js::from(__('property.booking_js_overlap')) }};
                                     return;
                                 }
                                 current.setDate(current.getDate() + 1);
@@ -418,9 +424,9 @@ if ($property->first_image) {
                     }
                 }
                 </script>
-                <section class="mt-8 p-6 bg-blue-50 rounded-lg" aria-label="Buchung" x-data="bookingForm()">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Aufenthalt buchen</h3>
-                    <p class="text-gray-600 mb-4">Wählen Sie Ihren gewünschten Zeitraum für diese Immobilie.</p>
+                <section class="mt-8 p-6 bg-blue-50 rounded-lg" aria-label="{{ __('property.booking_heading') }}" x-data="bookingForm()">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ __('property.booking_heading') }}</h3>
+                    <p class="text-gray-600 mb-4">{{ __('property.booking_subheading') }}</p>
 
                     @if(session('success'))
                         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4">
@@ -440,9 +446,9 @@ if ($property->first_image) {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {{-- Check-in Date --}}
                             <div>
-                                <label for="check_in" class="block text-sm font-medium text-gray-700 mb-1">Check-in *</label>
+                                <label for="check_in" class="block text-sm font-medium text-gray-700 mb-1">{{ __('property.booking_checkin_label') }}</label>
                                 <input type="text" id="check_in" name="check_in" required readonly
-                                       placeholder="Datum wählen"
+                                       placeholder="{{ __('property.booking_date_placeholder') }}"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white cursor-pointer">
                                 @error('check_in')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -451,9 +457,9 @@ if ($property->first_image) {
 
                             {{-- Check-out Date --}}
                             <div>
-                                <label for="check_out" class="block text-sm font-medium text-gray-700 mb-1">Check-out *</label>
+                                <label for="check_out" class="block text-sm font-medium text-gray-700 mb-1">{{ __('property.booking_checkout_label') }}</label>
                                 <input type="text" id="check_out" name="check_out" required readonly
-                                       placeholder="Datum wählen"
+                                       placeholder="{{ __('property.booking_date_placeholder') }}"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white cursor-pointer">
                                 @error('check_out')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -468,18 +474,18 @@ if ($property->first_image) {
 
                         {{-- Nights info --}}
                         <div x-show="nights > 0 && !dateError" x-cloak class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
-                            <p><span x-text="nights"></span> Nacht/Nächte ausgewählt</p>
-                            <p class="mt-1 font-semibold">Gesamtpreis: <span x-text="formatPrice(totalPrice)"></span></p>
-                            <p class="text-sm">{{ number_format($property->price, 2, ',', '.') }} € pro Person und Nacht</p>
+                            <p><span x-text="nights"></span> {{ __('property.booking_nights_suffix') }}</p>
+                            <p class="mt-1 font-semibold">{{ __('property.booking_total_price_label') }} <span x-text="formatPrice(totalPrice)"></span></p>
+                            <p class="text-sm">{{ __('property.booking_price_per_person_night', ['price' => $priceFormatted . ' €']) }}</p>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {{-- Name --}}
                             <div>
-                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">{{ __('property.booking_name_label') }}</label>
                                 <input type="text" id="name" name="name" required value="{{ old('name') }}"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                       placeholder="Ihr vollständiger Name">
+                                       placeholder="{{ __('property.booking_name_placeholder') }}">
                                 @error('name')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -487,10 +493,10 @@ if ($property->first_image) {
 
                             {{-- Email --}}
                             <div>
-                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-Mail *</label>
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">{{ __('property.booking_email_label') }}</label>
                                 <input type="email" id="email" name="email" required value="{{ old('email') }}"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                       placeholder="ihre@email.de">
+                                       placeholder="{{ __('property.booking_email_placeholder') }}">
                                 @error('email')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -500,10 +506,10 @@ if ($property->first_image) {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {{-- Phone --}}
                             <div>
-                                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Telefon (optional)</label>
+                                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">{{ __('property.booking_phone_label') }}</label>
                                 <input type="tel" id="phone" name="phone" value="{{ old('phone') }}"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                       placeholder="Ihre Telefonnummer">
+                                       placeholder="{{ __('property.booking_phone_placeholder') }}">
                                 @error('phone')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -511,11 +517,11 @@ if ($property->first_image) {
 
                             {{-- Guests --}}
                             <div>
-                                <label for="guests" class="block text-sm font-medium text-gray-700 mb-1">Anzahl Gäste *</label>
+                                <label for="guests" class="block text-sm font-medium text-gray-700 mb-1">{{ __('property.booking_guests_label') }}</label>
                                 <select id="guests" name="guests" required x-model.number="guests"
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     @for($i = 1; $i <= 10; $i++)
-                                        <option value="{{ $i }}" {{ old('guests', 1) == $i ? 'selected' : '' }}>{{ $i }} {{ $i === 1 ? 'Gast' : 'Gäste' }}</option>
+                                        <option value="{{ $i }}" {{ old('guests', 1) == $i ? 'selected' : '' }}>{{ $i }} {{ $i === 1 ? __('property.booking_guest_singular') : __('property.booking_guest_plural') }}</option>
                                     @endfor
                                 </select>
                                 @error('guests')
@@ -526,10 +532,10 @@ if ($property->first_image) {
 
                         {{-- Message --}}
                         <div>
-                            <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Nachricht (optional)</label>
+                            <label for="message" class="block text-sm font-medium text-gray-700 mb-1">{{ __('property.booking_message_label') }}</label>
                             <textarea id="message" name="message" rows="3"
                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                      placeholder="Haben Sie besondere Wünsche oder Fragen?">{{ old('message') }}</textarea>
+                                      placeholder="{{ __('property.booking_message_placeholder') }}">{{ old('message') }}</textarea>
                             @error('message')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -538,12 +544,12 @@ if ($property->first_image) {
                         <button type="submit"
                                 :disabled="!isValid"
                                 class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
-                            Buchungsanfrage senden
+                            {{ __('property.booking_submit') }}
                         </button>
                     </form>
 
                     <p class="text-sm text-gray-500 mt-4">
-                        * Nach Ihrer Anfrage erhalten Sie eine Bestätigung per E-Mail, sobald die Buchung von uns geprüft wurde.
+                        {{ __('property.booking_disclaimer') }}
                     </p>
                 </section>
             </div>

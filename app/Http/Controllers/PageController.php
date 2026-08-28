@@ -26,6 +26,13 @@ class PageController extends Controller
             'subject' => 'required|string|max:255',
             'message' => 'required|string|max:5000',
             'privacy' => 'required|accepted',
+        ], [
+            'name.required' => __('contact.validation.name_required'),
+            'email.required' => __('contact.validation.email_required'),
+            'email.email' => __('contact.validation.email_email'),
+            'subject.required' => __('contact.validation.subject_required'),
+            'message.required' => __('contact.validation.message_required'),
+            'privacy.required' => __('contact.validation.privacy_required'),
         ]);
 
         $subjectLabels = [
@@ -52,6 +59,6 @@ class PageController extends Controller
             }
         );
 
-        return back()->with('success', 'Vielen Dank für Ihre Nachricht! Wir werden uns schnellstmöglich bei Ihnen melden.');
+        return back()->with('success', __('contact.flash_success'));
     }
 }

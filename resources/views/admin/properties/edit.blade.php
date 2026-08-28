@@ -35,6 +35,22 @@
                                   placeholder="Ausführliche Beschreibung der Immobilie...">{{ old('description', $property->description) }}</textarea>
                     </div>
 
+                    <div class="md:col-span-2">
+                        <label for="title_en" class="block text-sm font-medium text-gray-700 mb-1">Titel (Englisch) – optional</label>
+                        <input type="text" id="title_en" name="title_en" value="{{ old('title_en', $property->title_en) }}"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="z.B. Villa with lake view">
+                        <p class="text-xs text-gray-500 mt-1">Wird auf der englischen Version der Website angezeigt. Wenn leer, wird der deutsche Titel verwendet.</p>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label for="description_en" class="block text-sm font-medium text-gray-700 mb-1">Beschreibung (Englisch) – optional</label>
+                        <textarea id="description_en" name="description_en" rows="5"
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  placeholder="English property description...">{{ old('description_en', $property->description_en) }}</textarea>
+                        <p class="text-xs text-gray-500 mt-1">Wird auf der englischen Version der Website angezeigt. Wenn leer, wird die deutsche Beschreibung verwendet.</p>
+                    </div>
+
                     <div>
                         <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Preis pro Person / Nacht (EUR) *</label>
                         <input type="number" id="price" name="price" required value="{{ old('price', $property->price) }}" min="0" step="0.01"

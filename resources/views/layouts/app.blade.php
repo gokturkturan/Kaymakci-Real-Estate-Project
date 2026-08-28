@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     {{-- Primary Meta Tags --}}
-    <title>@yield('title', 'Kaymakci Real Estate GmbH - Ihr Immobilienmakler in Deutschland')</title>
-    <meta name="description" content="@yield('meta_description', 'Kaymakci Real Estate GmbH - Ihr zuverlässiger Partner für Immobilien in Deutschland. Finden Sie Häuser, Wohnungen, Villen und mehr.')">
-    <meta name="keywords" content="@yield('meta_keywords', 'Immobilien, Haus kaufen, Wohnung kaufen, Immobilienmakler, Deutschland, Villa, Penthouse, Kaymakci Real Estate GmbH')">
+    <title>@yield('title', __('layout.meta_default_title'))</title>
+    <meta name="description" content="@yield('meta_description', __('layout.meta_default_description'))">
+    <meta name="keywords" content="@yield('meta_keywords', __('layout.meta_default_keywords'))">
     <meta name="author" content="Kaymakci Real Estate GmbH">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="@yield('canonical', url()->current())">
@@ -16,10 +16,10 @@
     {{-- Open Graph / Facebook --}}
     <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="@yield('og_title', 'Kaymakci Real Estate GmbH - Ihr Immobilienmakler in Deutschland')">
-    <meta property="og:description" content="@yield('og_description', 'Kaymakci Real Estate GmbH - Ihr zuverlässiger Partner für Immobilien in Deutschland.')">
+    <meta property="og:title" content="@yield('og_title', __('layout.og_default_title'))">
+    <meta property="og:description" content="@yield('og_description', __('layout.og_default_description'))">
     <meta property="og:image" content="@yield('og_image', asset('images/logo.png'))">
-    <meta property="og:locale" content="de_DE">
+    <meta property="og:locale" content="{{ app()->getLocale() === 'de' ? 'de_DE' : 'en_US' }}">
     <meta property="og:site_name" content="Kaymakci Real Estate GmbH">
 
     {{-- Twitter Card --}}
@@ -47,15 +47,26 @@
     <header class="bg-white shadow-sm" role="banner">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <a href="{{ route('properties.index') }}" class="flex items-center gap-3" aria-label="Kaymakci Real Estate GmbH - Startseite">
+                <a href="{{ route('properties.index') }}" class="flex items-center gap-3" aria-label="{{ __('layout.home_aria') }}">
                     <img src="{{ asset('images/logo.png') }}" alt="Kaymakci Real Estate Logo" class="h-16 w-auto">
                     <span class="text-xl font-bold text-gray-900">Kaymakci Real Estate</span>
                 </a>
-                <nav class="flex gap-6 text-sm font-medium text-gray-600" role="navigation" aria-label="Hauptnavigation">
-                    <a href="{{ route('properties.index') }}" class="hover:text-blue-600 transition">Angebote</a>
-                    <a href="{{ route('pages.about') }}" class="hover:text-blue-600 transition">Über uns</a>
-                    <a href="{{ route('pages.contact') }}" class="hover:text-blue-600 transition">Kontakt</a>
-                </nav>
+                <div class="flex items-center gap-6">
+                    <nav class="flex gap-6 text-sm font-medium text-gray-600" role="navigation" aria-label="{{ __('layout.main_nav_aria') }}">
+                        <a href="{{ route('properties.index') }}" class="hover:text-blue-600 transition">{{ __('layout.nav_properties') }}</a>
+                        <a href="{{ route('pages.about') }}" class="hover:text-blue-600 transition">{{ __('layout.nav_about') }}</a>
+                        <a href="{{ route('pages.contact') }}" class="hover:text-blue-600 transition">{{ __('layout.nav_contact') }}</a>
+                    </nav>
+                    <div class="flex items-center gap-1 text-sm font-medium border-l border-gray-200 pl-6" role="navigation" aria-label="Sprachauswahl / Language selection">
+                        <a href="{{ route('locale.switch', 'de') }}"
+                           class="px-2 py-1 rounded transition {{ app()->getLocale() === 'de' ? 'text-blue-600 font-bold' : 'text-gray-400 hover:text-blue-600' }}"
+                           @if(app()->getLocale() === 'de') aria-current="true" @endif>DE</a>
+                        <span class="text-gray-300">|</span>
+                        <a href="{{ route('locale.switch', 'en') }}"
+                           class="px-2 py-1 rounded transition {{ app()->getLocale() === 'en' ? 'text-blue-600 font-bold' : 'text-gray-400 hover:text-blue-600' }}"
+                           @if(app()->getLocale() === 'en') aria-current="true" @endif>EN</a>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -69,7 +80,7 @@
             <div class="bg-white rounded-2xl p-3 inline-block mb-4">
                 <img src="{{ asset('images/logo.png') }}" alt="Kaymakci Real Estate Logo" class="h-14 w-auto">
             </div>
-            <p class="text-sm text-gray-300">Zuverlässige Immobilienberatung</p>
+            <p class="text-sm text-gray-300">{{ __('layout.footer_tagline') }}</p>
 
             {{-- Social & Contact Links --}}
             <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
@@ -92,7 +103,7 @@
                 </a>
             </div>
 
-            <p class="text-xs mt-4 text-gray-500">&copy; {{ date('Y') }} Kaymakci Real Estate GmbH. Alle Rechte vorbehalten.</p>
+            <p class="text-xs mt-4 text-gray-500">&copy; {{ date('Y') }} Kaymakci Real Estate GmbH. {{ __('layout.footer_rights') }}</p>
         </div>
     </footer>
 
@@ -102,7 +113,7 @@
         '@context' => 'https://schema.org',
         '@type' => 'RealEstateAgent',
         'name' => 'Kaymakci Real Estate GmbH',
-        'description' => 'Ihr zuverlässiger Partner für Immobilien in Deutschland',
+        'description' => __('layout.org_description'),
         'url' => url('/'),
         'logo' => asset('images/logo.png'),
         'address' => [
@@ -111,7 +122,7 @@
         ],
         'areaServed' => [
             '@type' => 'Country',
-            'name' => 'Deutschland'
+            'name' => __('layout.org_area_served')
         ]
     ];
     @endphp

@@ -28,11 +28,19 @@ class BookingController extends Controller
             'phone' => 'nullable|string|max:50',
             'guests' => 'required|integer|min:1|max:20',
             'message' => 'nullable|string|max:1000',
+        ], [
+            'check_in.required' => __('property.validation.check_in_required'),
+            'check_out.required' => __('property.validation.check_out_required'),
+            'check_out.after' => __('property.validation.check_out_after'),
+            'name.required' => __('property.validation.name_required'),
+            'email.required' => __('property.validation.email_required'),
+            'email.email' => __('property.validation.email_email'),
+            'guests.required' => __('property.validation.guests_required'),
         ]);
 
         // Check for overlapping bookings
         if (Booking::hasOverlap($property->id, $validated['check_in'], $validated['check_out'])) {
-            return back()->with('error', 'Die gewählten Daten sind leider nicht mehr verfügbar. Bitte wählen Sie andere Daten.');
+            return back()->with('error', __('booking.overlap_error'));
         }
 
         $nights = Carbon::parse($validated['check_in'])->diffInDays(Carbon::parse($validated['check_out']));
@@ -52,6 +60,6 @@ class BookingController extends Controller
             'status' => 'pending',
         ]);
 
-        return back()->with('success', 'Vielen Dank! Ihre Buchungsanfrage wurde erfolgreich gesendet. Wir werden uns in Kürze bei Ihnen melden.');
+        return back()->with('success', __('booking.success'));
     }
 }

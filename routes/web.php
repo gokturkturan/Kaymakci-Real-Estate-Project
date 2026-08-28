@@ -4,6 +4,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\PropertyController as AdminPropertyController;
@@ -18,6 +19,7 @@ Route::get('/ueber-uns', [PageController::class, 'about'])->name('pages.about');
 Route::get('/kontakt', [PageController::class, 'contact'])->name('pages.contact');
 Route::post('/kontakt', [PageController::class, 'sendContact'])->name('pages.contact.send');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/sprache/{locale}', [LocaleController::class, 'switch'])->whereIn('locale', ['de', 'en'])->name('locale.switch');
 
 // Admin Routes
 Route::prefix('admin')->name('admin.')->group(function () {

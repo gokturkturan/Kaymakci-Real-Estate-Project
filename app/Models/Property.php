@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,7 +15,9 @@ class Property extends Model
 
     protected $fillable = [
         'title',
+        'title_en',
         'description',
+        'description_en',
         'price',
         'location',
         'bedrooms',
@@ -107,6 +110,20 @@ class Property extends Model
     public function getFirstImageAttribute(): ?string
     {
         return $this->images->first()?->url ?? $this->image;
+    }
+
+    protected function localizedTitle(): Attribute
+    {
+        return Attribute::get(
+            fn () => app()->getLocale() === 'en' && filled($this->title_en) ? $this->title_en : $this->title
+        );
+    }
+
+    protected function localizedDescription(): Attribute
+    {
+        return Attribute::get(
+            fn () => app()->getLocale() === 'en' && filled($this->description_en) ? $this->description_en : $this->description
+        );
     }
 
     public function getMediaAttribute()
