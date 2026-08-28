@@ -9,7 +9,6 @@ return [
     'price_suffix_per_person_night' => 'pro Person / Nacht',
     'schema_home' => 'Startseite',
     'schema_listings' => 'Immobilienangebote',
-    'schema_unit_text' => 'Person pro Nacht',
     'breadcrumb_home' => 'Startseite',
     'breadcrumb_listings' => 'Angebote',
     'gallery_prev_aria' => 'Vorheriges Medium',

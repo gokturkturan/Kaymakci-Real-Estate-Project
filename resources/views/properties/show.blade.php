@@ -20,80 +20,84 @@
 
 @section('structured_data')
 @php
-$realEstateListing = [
-    '@context' => 'https://schema.org',
-    '@type' => 'RealEstateListing',
-    'name' => $property->localized_title,
-    'description' => $property->localized_description,
-    'url' => route('properties.show', $property),
-    'datePosted' => $property->created_at->toIso8601String(),
-    'offers' => [
-        '@type' => 'Offer',
-        'price' => $property->price,
-        'priceCurrency' => 'EUR',
-        'priceSpecification' => [
-            '@type' => 'UnitPriceSpecification',
-            'price' => $property->price,
-            'priceCurrency' => 'EUR',
-            'unitText' => __('property.schema_unit_text')
-        ],
-        'availability' => 'https://schema.org/InStock'
-    ],
-    'address' => [
-        '@type' => 'PostalAddress',
-        'addressLocality' => $property->location,
-        'addressCountry' => 'DE'
-    ],
-    'floorSize' => [
-        '@type' => 'QuantitativeValue',
-        'value' => $property->area,
-        'unitCode' => 'MTK'
-    ],
-    'numberOfRooms' => $property->bedrooms,
-    'numberOfBathroomsTotal' => $property->bathrooms
-];
-if ($property->images->count() > 0) {
-    $realEstateListing['image'] = $property->images->pluck('url')->toArray();
-}
-
-$breadcrumb = [
-    '@context' => 'https://schema.org',
-    '@type' => 'BreadcrumbList',
-    'itemListElement' => [
-        ['@type' => 'ListItem', 'position' => 1, 'name' => __('property.schema_home'), 'item' => url('/')],
-        ['@type' => 'ListItem', 'position' => 2, 'name' => __('property.schema_listings'), 'item' => route('properties.index')],
-        ['@type' => 'ListItem', 'position' => 3, 'name' => $property->localized_title, 'item' => route('properties.show', $property)]
-    ]
-];
-
-$product = [
-    '@context' => 'https://schema.org',
-    '@type' => 'Product',
-    'name' => $property->localized_title,
-    'description' => Str::limit($property->localized_description, 200),
-    'brand' => ['@type' => 'Brand', 'name' => 'Kaymakci Real Estate GmbH'],
-    'offers' => [
-        '@type' => 'Offer',
+    $realEstateListing = [
+        '@context' => 'https://schema.org',
+        '@type' => 'RealEstateListing',
+        'name' => $property->localized_title,
+        'description' => $property->localized_description,
         'url' => route('properties.show', $property),
-        'priceCurrency' => 'EUR',
-        'price' => $property->price,
-        'priceSpecification' => [
-            '@type' => 'UnitPriceSpecification',
+        'datePosted' => $property->created_at->toIso8601String(),
+
+        'image' => $property->images
+            ->pluck('url')
+            ->values()
+            ->toArray(),
+
+        'offers' => [
+            '@type' => 'Offer',
+            'url' => route('properties.show', $property),
             'price' => $property->price,
             'priceCurrency' => 'EUR',
-            'unitText' => __('property.schema_unit_text')
+            'availability' => 'https://schema.org/InStock',
         ],
-        'availability' => 'https://schema.org/InStock',
-        'seller' => ['@type' => 'RealEstateAgent', 'name' => 'Kaymakci Real Estate GmbH']
-    ]
-];
-if ($property->first_image) {
-    $product['image'] = $property->first_image;
-}
+
+        'address' => [
+            '@type' => 'PostalAddress',
+            'addressLocality' => $property->location,
+            'addressCountry' => 'DE',
+        ],
+
+        'floorSize' => [
+            '@type' => 'QuantitativeValue',
+            'value' => $property->area,
+            'unitCode' => 'MTK',
+        ],
+
+        'numberOfBedrooms' => $property->bedrooms,
+        'numberOfBathroomsTotal' => $property->bathrooms,
+    ];
+
+    if ($property->latitude !== null && $property->longitude !== null) {
+        $realEstateListing['geo'] = [
+            '@type' => 'GeoCoordinates',
+            'latitude' => $property->latitude,
+            'longitude' => $property->longitude,
+        ];
+    }
+
+    $breadcrumb = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            [
+                '@type' => 'ListItem',
+                'position' => 1,
+                'name' => __('property.schema_home'),
+                'item' => url('/'),
+            ],
+            [
+                '@type' => 'ListItem',
+                'position' => 2,
+                'name' => __('property.schema_listings'),
+                'item' => route('properties.index'),
+            ],
+            [
+                '@type' => 'ListItem',
+                'position' => 3,
+                'name' => $property->localized_title,
+                'item' => route('properties.show', $property),
+            ],
+        ],
+    ];
 @endphp
-<script type="application/ld+json">{!! json_encode($realEstateListing, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
-<script type="application/ld+json">{!! json_encode($breadcrumb, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
-<script type="application/ld+json">{!! json_encode($product, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+
+<script type="application/ld+json">
+{!! json_encode($realEstateListing, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+
+<script type="application/ld+json">
+{!! json_encode($breadcrumb, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
 @endsection
 
 @section('content')

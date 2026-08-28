@@ -9,7 +9,6 @@ return [
     'price_suffix_per_person_night' => 'per person / night',
     'schema_home' => 'Home',
     'schema_listings' => 'Property listings',
-    'schema_unit_text' => 'person per night',
     'breadcrumb_home' => 'Home',
     'breadcrumb_listings' => 'Listings',
     'gallery_prev_aria' => 'Previous media',
