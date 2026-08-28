@@ -5,7 +5,6 @@
     {{-- Homepage --}}
     <url>
         <loc>{{ url('/') }}</loc>
-        <lastmod>{{ now()->toIso8601String() }}</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>

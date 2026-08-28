@@ -1,5 +1,5 @@
 # Kaymakci Real Estate GmbH - robots.txt
-# https://www.kaymakci-realestate.de
+# https://kaymakcirealestate.de
 
 User-agent: *
 Allow: /

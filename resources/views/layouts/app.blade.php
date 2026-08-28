@@ -116,9 +116,21 @@
         'description' => __('layout.org_description'),
         'url' => url('/'),
         'logo' => asset('images/logo.png'),
+        'image' => asset('images/logo.png'),
+        'telephone' => '+49 176 24821040',
+        'email' => 'ali@kaymakci-real-estate.de',
         'address' => [
             '@type' => 'PostalAddress',
+            'streetAddress' => 'Riedhofweg 23',
+            'postalCode' => '60596',
+            'addressLocality' => 'Frankfurt am Main',
             'addressCountry' => 'DE'
+        ],
+        'openingHoursSpecification' => [
+            '@type' => 'OpeningHoursSpecification',
+            'dayOfWeek' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+            'opens' => '09:00',
+            'closes' => '18:00'
         ],
         'areaServed' => [
             '@type' => 'Country',

@@ -2,6 +2,8 @@
 
 @section('title', __('home.meta_title'))
 
+@section('canonical', route('properties.index', request()->only('page')))
+
 @section('meta_description', __('home.meta_description', ['count' => $properties->total()]))
 
 @section('meta_keywords', __('home.meta_keywords'))
