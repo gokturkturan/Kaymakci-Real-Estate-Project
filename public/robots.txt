@@ -1,29 +1,10 @@
 # Kaymakci Real Estate GmbH - robots.txt
-# https://kaymakcirealestate.de
 
 User-agent: *
 Allow: /
-Allow: /storage/
 Disallow: /admin/
 Disallow: /api/
-Disallow: /*.json$
 Disallow: /vendor/
+Disallow: /*.json$
 
-# Sitemaps
 Sitemap: https://kaymakcirealestate.de/sitemap.xml
-
-# Crawl-delay für respektvolles Crawling
-Crawl-delay: 1
-
-# Googlebot spezifisch
-User-agent: Googlebot
-Allow: /
-Disallow: /admin/
-Disallow: /api/
-
-# Bingbot spezifisch
-User-agent: Bingbot
-Allow: /
-Disallow: /admin/
-Disallow: /api/
-Crawl-delay: 1
