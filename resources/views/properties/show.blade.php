@@ -29,7 +29,7 @@
         'datePosted' => $property->created_at->toIso8601String(),
 
         'image' => $property->images
-            ->pluck('url')
+            ->map(fn ($image) => url($image->url))
             ->values()
             ->toArray(),
 
