@@ -5,7 +5,7 @@
 
 @section('content')
     {{-- Stats --}}
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <p class="text-2xl font-bold text-yellow-700">{{ $stats['pending'] }}</p>
             <p class="text-sm text-yellow-600">Ausstehend</p>
@@ -26,10 +26,10 @@
 
     {{-- Filters --}}
     <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
-        <form action="{{ route('admin.bookings.index') }}" method="GET" class="flex flex-wrap gap-4 items-end">
+        <form action="{{ route('admin.bookings.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap gap-4 lg:items-end">
             <div>
                 <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select name="status" id="status" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                <select name="status" id="status" class="w-full lg:w-auto px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                     <option value="">Alle</option>
                     <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Ausstehend</option>
                     <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Bestätigt</option>
@@ -40,21 +40,23 @@
             <div>
                 <label for="from_date" class="block text-sm font-medium text-gray-700 mb-1">Check-in ab</label>
                 <input type="date" name="from_date" id="from_date" value="{{ request('from_date') }}"
-                       class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                       class="w-full lg:w-auto px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
                 <label for="to_date" class="block text-sm font-medium text-gray-700 mb-1">Check-out bis</label>
                 <input type="date" name="to_date" id="to_date" value="{{ request('to_date') }}"
-                       class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                       class="w-full lg:w-auto px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
             </div>
-            <button type="submit" class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition">
-                Filtern
-            </button>
-            @if(request()->hasAny(['status', 'from_date', 'to_date']))
-                <a href="{{ route('admin.bookings.index') }}" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition">
-                    Filter zurücksetzen
-                </a>
-            @endif
+            <div class="flex items-center gap-3">
+                <button type="submit" class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition">
+                    Filtern
+                </button>
+                @if(request()->hasAny(['status', 'from_date', 'to_date']))
+                    <a href="{{ route('admin.bookings.index') }}" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition">
+                        Filter zurücksetzen
+                    </a>
+                @endif
+            </div>
         </form>
     </div>
 

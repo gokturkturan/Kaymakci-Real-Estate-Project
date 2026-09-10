@@ -59,25 +59,26 @@
         </div>
         <div class="divide-y divide-gray-200">
             @forelse($stats['recent_properties'] as $property)
-                <div class="px-6 py-4 flex items-center gap-4">
+                <div class="px-4 sm:px-6 py-4 flex items-center gap-3 sm:gap-4">
                     @if($property->first_image)
-                        <img src="{{ $property->first_image }}" alt="{{ $property->title }}" class="w-16 h-16 object-cover rounded-lg">
+                        <img src="{{ $property->first_image }}" alt="{{ $property->title }}" class="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg flex-shrink-0">
                     @else
-                        <div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
+                        <div class="w-14 h-14 sm:w-16 sm:h-16 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
                             <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                         </div>
                     @endif
-                    <div class="flex-1">
-                        <h3 class="font-medium text-gray-900">{{ $property->title }}</h3>
-                        <p class="text-sm text-gray-600">{{ $property->location }}</p>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="font-medium text-gray-900 truncate">{{ $property->title }}</h3>
+                        <p class="text-sm text-gray-600 truncate">{{ $property->location }}</p>
+                        <p class="font-semibold text-gray-900 text-sm mt-1 sm:hidden">{{ number_format($property->price, 2, ',', '.') }} &euro; <span class="font-normal text-gray-500">/ Person/Nacht</span></p>
                     </div>
-                    <div class="text-right">
+                    <div class="text-right hidden sm:block flex-shrink-0">
                         <p class="font-semibold text-gray-900">{{ number_format($property->price, 2, ',', '.') }} &euro; <span class="text-sm font-normal text-gray-500">/ Person/Nacht</span></p>
                         <p class="text-sm text-gray-500">{{ $property->created_at->diffForHumans() }}</p>
                     </div>
-                    <a href="{{ route('admin.properties.edit', $property) }}" class="text-blue-600 hover:text-blue-800">
+                    <a href="{{ route('admin.properties.edit', $property) }}" class="text-blue-600 hover:text-blue-800 flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                         </svg>

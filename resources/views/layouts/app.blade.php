@@ -38,20 +38,23 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>[x-cloak]{display:none !important;}</style>
 
     {{-- Favicon --}}
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
 
-    <header class="bg-white shadow-sm" role="banner">
+    <header class="bg-white shadow-sm" role="banner" x-data="{ mobileOpen: false }" @keydown.escape.window="mobileOpen = false">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <a href="{{ route('properties.index') }}" class="flex items-center gap-3" aria-label="{{ __('layout.home_aria') }}">
-                    <img src="{{ asset('images/logo.png') }}" alt="Kaymakci Real Estate Logo" class="h-16 w-auto">
-                    <span class="text-xl font-bold text-gray-900">Kaymakci Real Estate</span>
+            <div class="flex justify-between items-center h-16 sm:h-20 gap-3">
+                <a href="{{ route('properties.index') }}" class="flex items-center gap-2 sm:gap-3 min-w-0" aria-label="{{ __('layout.home_aria') }}">
+                    <img src="{{ asset('images/logo.png') }}" alt="Kaymakci Real Estate Logo" class="h-10 sm:h-16 w-auto flex-shrink-0">
+                    <span class="text-base sm:text-xl font-bold text-gray-900 truncate">Kaymakci Real Estate</span>
                 </a>
-                <div class="flex items-center gap-6">
+
+                {{-- Desktop navigation --}}
+                <div class="hidden md:flex items-center gap-6">
                     <nav class="flex gap-6 text-sm font-medium text-gray-600" role="navigation" aria-label="{{ __('layout.main_nav_aria') }}">
                         <a href="{{ route('properties.index') }}" class="hover:text-blue-600 transition">{{ __('layout.nav_properties') }}</a>
                         <a href="{{ route('pages.about') }}" class="hover:text-blue-600 transition">{{ __('layout.nav_about') }}</a>
@@ -66,6 +69,36 @@
                            class="px-2 py-1 rounded transition {{ app()->getLocale() === 'en' ? 'text-blue-600 font-bold' : 'text-gray-400 hover:text-blue-600' }}"
                            @if(app()->getLocale() === 'en') aria-current="true" @endif>EN</a>
                     </div>
+                </div>
+
+                {{-- Mobile hamburger --}}
+                <button type="button" @click="mobileOpen = !mobileOpen"
+                        class="md:hidden inline-flex items-center justify-center p-2 -mr-2 rounded-lg text-gray-600 hover:bg-gray-100 flex-shrink-0"
+                        :aria-expanded="mobileOpen" aria-label="{{ __('layout.main_nav_aria') }}">
+                    <svg x-show="!mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    <svg x-show="mobileOpen" x-cloak class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            {{-- Mobile navigation panel --}}
+            <div x-show="mobileOpen" x-cloak x-transition class="md:hidden border-t border-gray-100 py-3">
+                <nav class="flex flex-col text-sm font-medium text-gray-700" role="navigation" aria-label="{{ __('layout.main_nav_aria') }}">
+                    <a href="{{ route('properties.index') }}" class="py-2.5 hover:text-blue-600 transition">{{ __('layout.nav_properties') }}</a>
+                    <a href="{{ route('pages.about') }}" class="py-2.5 hover:text-blue-600 transition">{{ __('layout.nav_about') }}</a>
+                    <a href="{{ route('pages.contact') }}" class="py-2.5 hover:text-blue-600 transition">{{ __('layout.nav_contact') }}</a>
+                </nav>
+                <div class="flex items-center gap-1 text-sm font-medium mt-2 pt-3 border-t border-gray-100" role="navigation" aria-label="Sprachauswahl / Language selection">
+                    <a href="{{ route('locale.switch', 'de') }}"
+                       class="px-2 py-1 rounded transition {{ app()->getLocale() === 'de' ? 'text-blue-600 font-bold' : 'text-gray-400 hover:text-blue-600' }}"
+                       @if(app()->getLocale() === 'de') aria-current="true" @endif>DE</a>
+                    <span class="text-gray-300">|</span>
+                    <a href="{{ route('locale.switch', 'en') }}"
+                       class="px-2 py-1 rounded transition {{ app()->getLocale() === 'en' ? 'text-blue-600 font-bold' : 'text-gray-400 hover:text-blue-600' }}"
+                       @if(app()->getLocale() === 'en') aria-current="true" @endif>EN</a>
                 </div>
             </div>
         </div>

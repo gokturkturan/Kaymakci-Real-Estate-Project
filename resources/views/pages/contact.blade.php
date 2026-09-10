@@ -8,10 +8,10 @@
 
 @section('content')
     {{-- Hero --}}
-    <section class="bg-blue-600 text-white py-16">
+    <section class="bg-blue-600 text-white py-12 sm:py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-4xl font-bold mb-4">{{ __('contact.hero_title') }}</h1>
-            <p class="text-xl text-blue-100">{{ __('contact.hero_subtitle') }}</p>
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4">{{ __('contact.hero_title') }}</h1>
+            <p class="text-lg sm:text-xl text-blue-100">{{ __('contact.hero_subtitle') }}</p>
         </div>
     </section>
 
@@ -20,7 +20,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
             {{-- Contact Info --}}
-            <div class="bg-white rounded-xl shadow-md p-8">
+            <div class="bg-white rounded-xl shadow-md p-6 sm:p-8">
                 <h2 class="text-2xl font-bold text-gray-900 mb-6">{{ __('contact.info_heading') }}</h2>
 
                 <div class="space-y-6">
@@ -95,7 +95,7 @@
             </div>
 
             {{-- Contact Form --}}
-            <div class="bg-white rounded-xl shadow-md p-8">
+            <div class="bg-white rounded-xl shadow-md p-6 sm:p-8">
                 <h2 class="text-2xl font-bold text-gray-900 mb-6">{{ __('contact.form_heading') }}</h2>
 
                 <form action="{{ route('pages.contact.send') }}" method="POST" class="space-y-6">

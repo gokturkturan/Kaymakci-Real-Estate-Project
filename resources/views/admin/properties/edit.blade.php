@@ -5,7 +5,7 @@
 
 @section('content')
     <div class="max-w-4xl">
-        <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6">
             @if($errors->any())
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
                     <ul class="list-disc list-inside">
@@ -170,9 +170,9 @@
                     </div>
                 </div>
 
-                <div class="flex justify-end gap-4 pt-4 border-t">
+                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 sm:gap-4 pt-4 border-t">
                     <a href="{{ route('admin.properties.index') }}"
-                       class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                       class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition text-center">
                         Abbrechen
                     </a>
                     <button type="submit"

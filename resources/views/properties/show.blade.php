@@ -207,10 +207,10 @@
                 </figure>
             @endif
 
-            <div class="p-8">
+            <div class="p-5 sm:p-8">
                 <header class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900" itemprop="name">{{ $property->localized_title }}</h1>
+                        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900" itemprop="name">{{ $property->localized_title }}</h1>
                         <p class="text-gray-500 mt-1" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
                             <span itemprop="addressLocality">{{ $property->location }}</span>
                         </p>
@@ -428,7 +428,7 @@
                     }
                 }
                 </script>
-                <section class="mt-8 p-6 bg-blue-50 rounded-lg" aria-label="{{ __('property.booking_heading') }}" x-data="bookingForm()">
+                <section class="mt-8 p-4 sm:p-6 bg-blue-50 rounded-lg" aria-label="{{ __('property.booking_heading') }}" x-data="bookingForm()">
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ __('property.booking_heading') }}</h3>
                     <p class="text-gray-600 mb-4">{{ __('property.booking_subheading') }}</p>
 

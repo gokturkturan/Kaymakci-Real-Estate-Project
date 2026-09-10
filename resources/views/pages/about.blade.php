@@ -8,16 +8,16 @@
 
 @section('content')
     {{-- Hero --}}
-    <section class="bg-blue-600 text-white py-16">
+    <section class="bg-blue-600 text-white py-12 sm:py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-4xl font-bold mb-4">{{ __('about.hero_title') }}</h1>
-            <p class="text-xl text-blue-100">{{ __('about.hero_subtitle') }}</p>
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4">{{ __('about.hero_title') }}</h1>
+            <p class="text-lg sm:text-xl text-blue-100">{{ __('about.hero_subtitle') }}</p>
         </div>
     </section>
 
     {{-- Content --}}
     <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="bg-white rounded-xl shadow-md p-8">
+        <div class="bg-white rounded-xl shadow-md p-6 sm:p-8">
 
             <div class="prose prose-lg max-w-none">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ __('about.heading') }}</h2>
