@@ -115,4 +115,17 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Redirect All Mail (testing)
+    |--------------------------------------------------------------------------
+    |
+    | When set, every outgoing e-mail is delivered to this address instead of
+    | its real recipient. Use it in local/staging to test mail flows without
+    | sending to real customers. Leave empty in production.
+    |
+    */
+
+    'redirect_to' => env('MAIL_REDIRECT_TO'),
+
 ];

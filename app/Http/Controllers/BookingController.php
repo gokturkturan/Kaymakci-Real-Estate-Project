@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Property;
+use App\Support\BookingMailer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -58,7 +59,10 @@ class BookingController extends Controller
             'total_price' => $nights * $validated['guests'] * $pricePerPersonPerNight,
             'message' => $validated['message'] ?? null,
             'status' => 'pending',
+            'locale' => app()->getLocale(),
         ]);
+
+        BookingMailer::sendNewBookingNotification($booking);
 
         return back()->with('success', __('booking.success'));
     }

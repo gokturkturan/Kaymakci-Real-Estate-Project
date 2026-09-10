@@ -20,6 +20,7 @@ class Booking extends Model
         'total_price',
         'message',
         'status',
+        'locale',
         'admin_notes',
     ];
 

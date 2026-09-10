@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Support\BookingMailer;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
@@ -49,6 +50,8 @@ class BookingController extends Controller
     {
         $booking->update(['status' => 'approved']);
 
+        BookingMailer::sendApproved($booking);
+
         return back()->with('success', 'Buchung wurde bestätigt.');
     }
 
@@ -62,6 +65,8 @@ class BookingController extends Controller
             'status' => 'rejected',
             'admin_notes' => $request->admin_notes,
         ]);
+
+        BookingMailer::sendRejected($booking);
 
         return back()->with('success', 'Buchung wurde abgelehnt.');
     }
