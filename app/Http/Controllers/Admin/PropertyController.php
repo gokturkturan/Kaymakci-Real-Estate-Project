@@ -43,6 +43,7 @@ class PropertyController extends Controller
         ]);
 
         $validated['has_parking'] = $request->boolean('has_parking');
+        $validated['description'] = $this->sanitizeDescription($validated['description']);
 
         $coordinates = $this->geocodeAddress($validated['location']);
         if ($coordinates) {
@@ -86,6 +87,7 @@ class PropertyController extends Controller
         ]);
 
         $validated['has_parking'] = $request->boolean('has_parking');
+        $validated['description'] = $this->sanitizeDescription($validated['description']);
 
         if ($property->location !== $validated['location'] || $property->latitude === null || $property->longitude === null) {
             $coordinates = $this->geocodeAddress($validated['location']);
@@ -210,6 +212,37 @@ class PropertyController extends Controller
         }
 
         return back()->with('success', 'Video wurde erfolgreich gelöscht.');
+    }
+
+    /**
+     * The description comes from a Quill rich-text editor. Strip anything
+     * outside this formatting allowlist (e.g. <script>, event handler
+     * attributes) before it's stored and fed to the translator.
+     */
+    private function sanitizeDescription(string $html): string
+    {
+        $allowedTags = '<p><br><strong><em><u><span><h1><h2><h3><ul><ol><li>';
+        $clean = strip_tags($html, $allowedTags);
+
+        // strip_tags() only removes disallowed tags, not attributes on the
+        // ones we keep — drop every attribute except a <span> font-size
+        // declaration (Quill's "size" format), so no onclick=/onerror=/
+        // arbitrary CSS survives on an allowed tag.
+        return preg_replace_callback(
+            '/<(\w+)([^>]*)>/',
+            function ($matches) {
+                [, $tag, $attributes] = $matches;
+                if (
+                    strtolower($tag) === 'span'
+                    && preg_match('/\sstyle\s*=\s*"([^"]*)"/i', $attributes, $style)
+                    && preg_match('/^font-size:\s*\d+(\.\d+)?(px|em|rem|%);?$/i', trim($style[1]))
+                ) {
+                    return '<span style="' . trim($style[1]) . '">';
+                }
+                return "<{$tag}>";
+            },
+            $clean
+        );
     }
 
     private function geocodeAddress(string $address): ?array

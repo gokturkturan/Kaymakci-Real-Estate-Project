@@ -15,6 +15,16 @@ use Illuminate\Support\Facades\Log;
  * description_{locale} are fully system-managed and re-synced whenever the
  * German source text changes, purely so the storefront doesn't have to call
  * the translation API on every page view.
+ *
+ * Rich-text formatting (bold/italic/size from the admin's Quill editor) is
+ * only reliable in German. MyMemory does usually carry inline tags like
+ * <strong> through to the translation, but not deterministically — a given
+ * sentence can come back with the tag silently dropped depending on how much
+ * the target language reorders words, and retrying an identical query
+ * returns the same result. Rather than ship inconsistent formatting, the
+ * description is stripped to plain text before translation, so EN/PL/SK/RO
+ * are always plain (but always correct) and only the German source keeps
+ * formatting.
  */
 class PropertyTranslator
 {
@@ -46,7 +56,8 @@ class PropertyTranslator
             }
 
             if ($descriptionChanged || empty($property->{$descriptionField})) {
-                if ($translated = self::translate($property->description, $locale)) {
+                $plainDescription = self::stripFormatting($property->description);
+                if ($translated = self::translate($plainDescription, $locale)) {
                     $property->{$descriptionField} = $translated;
                 }
             }
@@ -55,6 +66,16 @@ class PropertyTranslator
         if ($property->isDirty()) {
             $property->save();
         }
+    }
+
+    /**
+     * HTML -> plain text, turning block boundaries into spaces so content
+     * from different paragraphs doesn't run together.
+     */
+    public static function stripFormatting(?string $html): string
+    {
+        $withBreaks = preg_replace('/<\/(p|div|li|h[1-6])>|<br\s*\/?>/i', ' ', (string) $html);
+        return trim(preg_replace('/\s+/', ' ', strip_tags($withBreaks)));
     }
 
     public static function translate(?string $text, string $targetLocale): ?string
@@ -110,8 +131,12 @@ class PropertyTranslator
     }
 
     /**
-     * Break text into pieces under MyMemory's per-request length limit,
-     * preferring sentence boundaries so each chunk stays coherent.
+     * Break text into pieces under MyMemory's per-request length limit.
+     * Descriptions are HTML (Quill output): splitting on </p> boundaries
+     * first means inline tags like <strong>/<span> never get separated
+     * from their closing tag across a chunk. Falls back to sentence- and
+     * then word-boundary splitting for a single paragraph that's still
+     * too long on its own.
      */
     private static function splitIntoChunks(string $text): array
     {
@@ -119,6 +144,35 @@ class PropertyTranslator
             return [$text];
         }
 
+        $paragraphs = preg_split('/(?<=<\/p>)/i', $text, -1, PREG_SPLIT_NO_EMPTY) ?: [$text];
+        $chunks = [];
+        $current = '';
+
+        foreach ($paragraphs as $paragraph) {
+            if ($current !== '' && mb_strlen($current) + mb_strlen($paragraph) > self::MAX_CHUNK_LENGTH) {
+                $chunks[] = $current;
+                $current = '';
+            }
+
+            if (mb_strlen($paragraph) > self::MAX_CHUNK_LENGTH) {
+                foreach (self::splitBySentence($paragraph) as $piece) {
+                    $chunks[] = $piece;
+                }
+                continue;
+            }
+
+            $current .= $paragraph;
+        }
+
+        if ($current !== '') {
+            $chunks[] = $current;
+        }
+
+        return $chunks;
+    }
+
+    private static function splitBySentence(string $text): array
+    {
         $sentences = preg_split('/(?<=[.!?])\s+/u', $text, -1, PREG_SPLIT_NO_EMPTY) ?: [$text];
         $chunks = [];
         $current = '';

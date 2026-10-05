@@ -16,6 +16,17 @@
                 </div>
             @endif
 
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css">
+            <script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
+            <style>
+                /* Quill's own CSS sets .ql-container/.ql-editor to height:100%, which
+                   resolves unpredictably inside an auto-height CSS grid row and can make
+                   the editor collapse or overflow onto the fields below it. Pin it to an
+                   explicit, scrollable height instead. */
+                #description-editor.ql-container { height: auto; }
+                #description-editor .ql-editor { height: 180px; max-height: 320px; overflow-y: auto; }
+            </style>
+
             <form id="property-form" action="{{ route('admin.properties.update', $property) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
                 @method('PUT')
@@ -29,11 +40,10 @@
                     </div>
 
                     <div class="md:col-span-2">
-                        <label for="description" class="block text-sm font-medium text-ivory-700 mb-1">Beschreibung *</label>
-                        <textarea id="description" name="description" rows="5" required
-                                  class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
-                                  placeholder="Ausführliche Beschreibung der Immobilie...">{{ old('description', $property->description) }}</textarea>
-                        <p class="text-xs text-ivory-500 mt-1">Titel &amp; Beschreibung werden beim Speichern automatisch ins Englische, Polnische, Slowakische und Rumänische übersetzt – dafür gibt es keine eigenen Felder.</p>
+                        <label for="description-editor" class="block text-sm font-medium text-ivory-700 mb-1">Beschreibung *</label>
+                        <div id="description-editor" class="bg-white"></div>
+                        <textarea id="description" name="description" class="hidden" required>{{ old('description', $property->description) }}</textarea>
+                        <p class="text-xs text-ivory-500 mt-1">Titel &amp; Beschreibung werden beim Speichern automatisch ins Englische, Polnische, Slowakische und Rumänische übersetzt – dafür gibt es keine eigenen Felder. Formatierung (fett, kursiv, Schriftgröße) wird nur auf Deutsch angezeigt; in den übersetzten Sprachen erscheint die Beschreibung als Fließtext.</p>
                     </div>
 
                     <div>
@@ -431,7 +441,26 @@
             });
         }
 
+        const descriptionTextarea = document.getElementById('description');
+        const descriptionQuill = new Quill('#description-editor', {
+            theme: 'snow',
+            placeholder: 'Ausführliche Beschreibung der Immobilie...',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline'],
+                    [{ size: ['small', false, 'large', 'huge'] }],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    ['clean'],
+                ],
+            },
+        });
+        if (descriptionTextarea.value) {
+            descriptionQuill.root.innerHTML = descriptionTextarea.value;
+        }
+
         document.getElementById('property-form').addEventListener('submit', function () {
+            descriptionTextarea.value = descriptionQuill.root.innerHTML;
+
             const btn = document.getElementById('submit-btn');
             btn.disabled = true;
             btn.classList.add('opacity-75', 'cursor-not-allowed');

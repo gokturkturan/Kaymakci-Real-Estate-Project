@@ -14,7 +14,7 @@
 
 @section('title', __('property.meta_title', ['title' => $property->localized_title, 'bedrooms' => $property->bedrooms, 'area' => $property->area, 'location' => $property->location]))
 
-@section('meta_description', __('property.meta_description', ['title' => $property->localized_title, 'location' => $property->location, 'bedrooms' => $property->bedrooms, 'bathrooms' => $property->bathrooms, 'area' => $property->area, 'price' => $priceFormatted, 'excerpt' => Str::limit($property->localized_description, 100)]))
+@section('meta_description', __('property.meta_description', ['title' => $property->localized_title, 'location' => $property->location, 'bedrooms' => $property->bedrooms, 'bathrooms' => $property->bathrooms, 'area' => $property->area, 'price' => $priceFormatted, 'excerpt' => Str::limit($property->localized_description_plain, 100)]))
 
 @section('meta_keywords', __('property.meta_keywords', ['title' => $property->localized_title, 'location' => $property->location, 'bedrooms' => $property->bedrooms]))
 
@@ -30,7 +30,7 @@
         '@context' => 'https://schema.org',
         '@type' => 'RealEstateListing',
         'name' => $property->localized_title,
-        'description' => $property->localized_description,
+        'description' => $property->localized_description_plain,
         'url' => route('properties.show', $property),
         'datePosted' => $property->created_at->toIso8601String(),
 
@@ -263,7 +263,7 @@
 
                 <section aria-labelledby="description-title">
                     <h2 id="description-title" class="font-serif text-xl sm:text-2xl font-semibold text-ivory-900 mb-3">{{ __('property.description_heading') }}</h2>
-                    <div class="text-ivory-700 leading-relaxed whitespace-pre-line" itemprop="description">{{ $property->localized_description }}</div>
+                    <div class="prose prose-neutral max-w-none text-ivory-700 leading-relaxed" itemprop="description">{!! $property->localized_description !!}</div>
                 </section>
 
                 @if($property->latitude !== null && $property->longitude !== null)

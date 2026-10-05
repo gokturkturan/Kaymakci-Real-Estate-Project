@@ -138,6 +138,18 @@ class Property extends Model
         });
     }
 
+    /**
+     * Plain-text rendering of localized_description for contexts that can't
+     * carry HTML (meta tags, JSON-LD, sitemap) — block boundaries become
+     * spaces so paragraphs don't run into each other.
+     */
+    protected function localizedDescriptionPlain(): Attribute
+    {
+        return Attribute::get(
+            fn () => \App\Support\PropertyTranslator::stripFormatting($this->localized_description)
+        );
+    }
+
     public function getMediaAttribute()
     {
         return $this->images
