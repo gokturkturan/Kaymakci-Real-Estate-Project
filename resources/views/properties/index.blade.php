@@ -274,15 +274,18 @@ $breadcrumb = [
     </section>
 
     {{-- SEO Text Section --}}
-    <section class="bg-ivory-100 py-12 sm:py-16" aria-labelledby="seo-title">
+    <section class="py-12 sm:py-16" aria-labelledby="seo-title">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 id="seo-title" class="font-serif text-2xl font-semibold text-ivory-900 mb-4">{{ __('home.seo_heading') }}</h2>
+            <h2 id="seo-title" class="font-serif text-2xl font-semibold text-navy-900 mb-4">{{ __('home.seo_heading') }}</h2>
             <div class="prose prose-neutral max-w-none">
                 <p class="text-ivory-700 leading-relaxed">
                     {!! __('home.seo_paragraph_1') !!}
                 </p>
                 <p class="text-ivory-700 leading-relaxed mt-4">
                     {{ __('home.seo_paragraph_2') }}
+                </p>
+                <p class="font-serif text-lg text-navy-800 mt-6 pt-5 border-t border-ivory-200">
+                    <span class="text-gold-600">{{ __('home.seo_tagline') }}</span>
                 </p>
             </div>
         </div>

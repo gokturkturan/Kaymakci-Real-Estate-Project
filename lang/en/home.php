@@ -38,7 +38,8 @@ return [
     'pagination_prev' => 'Previous page',
     'pagination_next' => 'Next page',
     'pagination_summary' => 'Page :current of :last (:total listings)',
-    'seo_heading' => 'Your Real Estate Agent in Germany - Kaymakci Real Estate GmbH',
-    'seo_paragraph_1' => 'Welcome to <strong>Kaymakci Real Estate GmbH</strong>, your reliable partner for buying real estate in Germany. We offer a carefully curated selection of <strong>houses, apartments, villas and penthouses</strong> in the best locations across Germany - from Munich to Berlin to Freiburg.',
-    'seo_paragraph_2' => 'Our experienced team guides you through the entire buying process and helps you find the perfect property that fits your needs and your budget. Contact us today for personal advice.',
+    'seo_heading' => 'Welcome to Kaymakci Real Estate GmbH',
+    'seo_paragraph_1' => 'We rent high-quality, fully furnished and move-in ready apartments throughout the <strong>Rhine-Main region</strong> – including Frankfurt, Offenbach and Hanau.',
+    'seo_paragraph_2' => 'Our apartments offer you the comfort of a hotel and are equipped so you can move in right away and feel at home.',
+    'seo_tagline' => 'Arrive. Move in. Feel at home. – Kaymakci Real Estate GmbH',
 ];

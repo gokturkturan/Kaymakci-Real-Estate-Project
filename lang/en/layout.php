@@ -7,6 +7,8 @@ return [
     'nav_about' => 'About us',
     'nav_contact' => 'Contact',
     'footer_tagline' => 'Reliable real estate consulting',
+    'footer_quicklinks' => 'Quick Links',
+    'footer_contact' => 'Contact',
     'footer_rights' => 'All rights reserved.',
     'meta_default_title' => 'Kaymakci Real Estate GmbH - Your Real Estate Agent in Germany',
     'meta_default_description' => 'Kaymakci Real Estate GmbH - Your reliable partner for real estate in Germany. Find houses, apartments, villas and more.',

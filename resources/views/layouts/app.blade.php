@@ -74,7 +74,7 @@
     {{-- Favicon --}}
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 </head>
-<body class="bg-ivory-50 text-ivory-900 min-h-screen flex flex-col font-sans antialiased">
+<body class="bg-ivory-100 text-ivory-900 min-h-screen flex flex-col font-sans antialiased">
 
     <header class="sticky top-0 z-50 bg-ivory-50/95 backdrop-blur-sm border-b border-ivory-200" role="banner" x-data="{ mobileOpen: false }" @keydown.escape.window="mobileOpen = false">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -139,35 +139,91 @@
         @yield('content')
     </main>
 
-    <footer class="bg-gradient-to-b from-navy-900 to-navy-950 text-ivory-300 py-12 mt-12" role="contentinfo">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="bg-ivory-50 rounded-2xl p-3 inline-block mb-4 shadow-lift">
-                <img src="{{ asset('images/logo.png') }}" alt="Kaymakci Real Estate Logo" class="h-14 w-auto">
+    <footer class="relative overflow-hidden bg-gradient-to-b from-navy-900 to-navy-950 text-ivory-300 mt-12" role="contentinfo">
+        {{-- Gold accent line --}}
+        <div class="h-px w-full bg-gradient-to-r from-transparent via-gold-500/50 to-transparent"></div>
+
+        {{-- Ambient glow, consistent with hero sections --}}
+        <div class="pointer-events-none absolute -top-24 right-[-4rem] w-80 h-80 rounded-full bg-gold-500/10 blur-3xl"></div>
+        <div class="pointer-events-none absolute -bottom-32 -left-16 w-96 h-96 rounded-full bg-navy-500/20 blur-3xl"></div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1.2fr] gap-10 lg:gap-12">
+
+                {{-- Brand column --}}
+                <div class="sm:col-span-2 lg:col-span-1">
+                    <a href="{{ route('properties.index') }}" class="inline-flex items-center gap-3 mb-4" aria-label="{{ __('layout.home_aria') }}">
+                        <span class="bg-ivory-50 rounded-xl p-2 shadow-lift inline-flex flex-shrink-0">
+                            <img src="{{ asset('images/logo.png') }}" alt="Kaymakci Real Estate Logo" class="h-10 w-auto">
+                        </span>
+                        <span class="font-serif text-lg font-semibold text-ivory-50 tracking-tight">Kaymakci Real Estate</span>
+                    </a>
+                    <p class="text-sm text-ivory-400 leading-relaxed max-w-xs">{{ __('layout.footer_tagline') }}</p>
+
+                    <div class="mt-6 flex items-center gap-3">
+                        <a href="https://www.instagram.com/kaymakci_realestate" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
+                           class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-ivory-50/5 border border-ivory-50/10 text-ivory-300 hover:bg-gold-500 hover:text-navy-950 hover:border-gold-500 transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                        </a>
+                        <a href="mailto:ali@kaymakci-real-estate.de" aria-label="E-Mail"
+                           class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-ivory-50/5 border border-ivory-50/10 text-ivory-300 hover:bg-gold-500 hover:text-navy-950 hover:border-gold-500 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                {{-- Quick links column --}}
+                <div>
+                    <h2 class="font-serif text-sm font-semibold text-ivory-50 tracking-wide uppercase mb-4">{{ __('layout.footer_quicklinks') }}</h2>
+                    <nav class="flex flex-col gap-2.5 text-sm text-ivory-400" aria-label="{{ __('layout.footer_quicklinks') }}">
+                        <a href="{{ route('properties.index') }}" class="group inline-flex items-center gap-2 hover:text-gold-400 transition-colors">
+                            <span class="w-1 h-1 rounded-full bg-gold-500/70 group-hover:bg-gold-400 transition-colors"></span>{{ __('layout.nav_properties') }}
+                        </a>
+                        <a href="{{ route('pages.about') }}" class="group inline-flex items-center gap-2 hover:text-gold-400 transition-colors">
+                            <span class="w-1 h-1 rounded-full bg-gold-500/70 group-hover:bg-gold-400 transition-colors"></span>{{ __('layout.nav_about') }}
+                        </a>
+                        <a href="{{ route('pages.contact') }}" class="group inline-flex items-center gap-2 hover:text-gold-400 transition-colors">
+                            <span class="w-1 h-1 rounded-full bg-gold-500/70 group-hover:bg-gold-400 transition-colors"></span>{{ __('layout.nav_contact') }}
+                        </a>
+                    </nav>
+                </div>
+
+                {{-- Contact column --}}
+                <div>
+                    <h2 class="font-serif text-sm font-semibold text-ivory-50 tracking-wide uppercase mb-4">{{ __('layout.footer_contact') }}</h2>
+                    <ul class="flex flex-col gap-3 text-sm text-ivory-400">
+                        <li class="flex items-start gap-3">
+                            <svg class="w-4 h-4 mt-0.5 text-gold-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            <span>Riedhofweg 23<br>60596 Frankfurt am Main</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-4 h-4 text-gold-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                            </svg>
+                            <a href="tel:+4917624821040" class="hover:text-gold-400 transition-colors">+49 176 24821040</a>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-4 h-4 text-gold-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            <a href="mailto:ali@kaymakci-real-estate.de" class="hover:text-gold-400 transition-colors">ali@kaymakci-real-estate.de</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <p class="text-sm font-serif text-ivory-200">{{ __('layout.footer_tagline') }}</p>
 
-            {{-- Social & Contact Links --}}
-            <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
-                {{-- Instagram --}}
-                <a href="https://www.instagram.com/kaymakci_realestate" target="_blank" rel="noopener noreferrer"
-                   class="inline-flex items-center gap-2 text-ivory-400 hover:text-gold-400 transition-colors">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                    </svg>
-                    <span class="text-sm">@kaymakci_realestate</span>
-                </a>
-
-                {{-- Email --}}
-                <a href="mailto:ali@kaymakci-real-estate.de"
-                   class="inline-flex items-center gap-2 text-ivory-400 hover:text-gold-400 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
-                    <span class="text-sm">ali@kaymakci-real-estate.de</span>
-                </a>
+            {{-- Bottom bar --}}
+            <div class="mt-12 pt-6 border-t border-ivory-50/10 flex flex-col-reverse sm:flex-row items-center justify-between gap-3 text-xs text-ivory-500">
+                <p>&copy; {{ date('Y') }} Kaymakci Real Estate GmbH. {{ __('layout.footer_rights') }}</p>
+                <p class="text-ivory-600">Frankfurt am Main, Deutschland</p>
             </div>
-
-            <p class="text-xs mt-4 text-ivory-500">&copy; {{ date('Y') }} Kaymakci Real Estate GmbH. {{ __('layout.footer_rights') }}</p>
         </div>
     </footer>
 

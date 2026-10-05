@@ -7,6 +7,8 @@ return [
     'nav_about' => 'Über uns',
     'nav_contact' => 'Kontakt',
     'footer_tagline' => 'Zuverlässige Immobilienberatung',
+    'footer_quicklinks' => 'Navigation',
+    'footer_contact' => 'Kontakt',
     'footer_rights' => 'Alle Rechte vorbehalten.',
     'meta_default_title' => 'Kaymakci Real Estate GmbH - Ihr Immobilienmakler in Deutschland',
     'meta_default_description' => 'Kaymakci Real Estate GmbH - Ihr zuverlässiger Partner für Immobilien in Deutschland. Finden Sie Häuser, Wohnungen, Villen und mehr.',

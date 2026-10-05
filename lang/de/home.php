@@ -38,7 +38,8 @@ return [
     'pagination_prev' => 'Vorherige Seite',
     'pagination_next' => 'Nächste Seite',
     'pagination_summary' => 'Seite :current von :last (:total Angebote)',
-    'seo_heading' => 'Ihr Immobilienmakler in Deutschland - Kaymakci Real Estate GmbH',
-    'seo_paragraph_1' => 'Willkommen bei <strong>Kaymakci Real Estate GmbH</strong>, Ihrem zuverlässigen Partner für den Kauf von Immobilien in Deutschland. Wir bieten Ihnen eine sorgfältig ausgewählte Auswahl an <strong>Häusern, Wohnungen, Villen und Penthäusern</strong> in den besten Lagen Deutschlands - von München über Berlin bis Freiburg.',
-    'seo_paragraph_2' => 'Unser erfahrenes Team begleitet Sie durch den gesamten Kaufprozess und hilft Ihnen, die perfekte Immobilie zu finden, die Ihren Bedürfnissen und Ihrem Budget entspricht. Kontaktieren Sie uns noch heute für eine persönliche Beratung.',
+    'seo_heading' => 'Willkommen bei Kaymakci Real Estate GmbH',
+    'seo_paragraph_1' => 'Wir vermieten hochwertige, vollständig ausgestattete und bezugsfertige Wohnungen im <strong>Rhein-Main-Gebiet</strong> – unter anderem in Frankfurt, Offenbach und Hanau.',
+    'seo_paragraph_2' => 'Unsere Wohnungen bieten Ihnen den Komfort eines Hotels und sind so ausgestattet, dass Sie direkt einziehen und sich wohlfühlen können.',
+    'seo_tagline' => 'Ankommen. Einziehen. Wohlfühlen. – Kaymakci Real Estate GmbH',
 ];

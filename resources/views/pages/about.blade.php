@@ -38,7 +38,11 @@
                 </p>
 
                 <p class="text-ivory-700 leading-relaxed mb-6">
-                    <strong>{{ __('about.paragraph_4') }}</strong>
+                    {{ __('about.paragraph_4') }}
+                </p>
+
+                <p class="font-serif text-lg text-navy-800 mt-2 pt-5 border-t border-ivory-200">
+                    <span class="text-gold-600">{{ __('about.paragraph_5') }}</span>
                 </p>
             </div>
 
