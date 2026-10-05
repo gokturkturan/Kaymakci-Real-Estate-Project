@@ -75,7 +75,7 @@ class BookingMailer
     private static function sendCustomerStatusMail(Booking $booking, string $type): void
     {
         $booking->loadMissing('property');
-        $locale = in_array($booking->locale, ['de', 'en'], true) ? $booking->locale : 'de';
+        $locale = in_array($booking->locale, ['de', 'en', 'pl', 'sk', 'ro'], true) ? $booking->locale : 'de';
 
         $lines = [
             __("booking.mail_{$type}_greeting", ['name' => $booking->name], $locale),
@@ -126,12 +126,12 @@ class BookingMailer
 
     private static function date($value, string $locale): string
     {
-        return $value->translatedFormat($locale === 'de' ? 'd.m.Y' : 'M j, Y');
+        return $value->translatedFormat(in_array($locale, ['de', 'pl', 'sk', 'ro'], true) ? 'd.m.Y' : 'M j, Y');
     }
 
     private static function price(float $value, string $locale): string
     {
-        return $locale === 'de'
+        return in_array($locale, ['de', 'pl', 'sk', 'ro'], true)
             ? number_format($value, 2, ',', '.')
             : number_format($value, 2, '.', ',');
     }

@@ -67,8 +67,8 @@ $breadcrumb = [
 
 @section('content')
     @php
-        $decimalSep = app()->getLocale() === 'de' ? ',' : '.';
-        $thousandSep = app()->getLocale() === 'de' ? '.' : ',';
+        $decimalSep = in_array(app()->getLocale(), ['de', 'pl', 'sk', 'ro'], true) ? ',' : '.';
+        $thousandSep = in_array(app()->getLocale(), ['de', 'pl', 'sk', 'ro'], true) ? '.' : ',';
     @endphp
     {{-- Hero --}}
     <section class="relative overflow-hidden bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 text-ivory-50 py-20 sm:py-28" aria-labelledby="hero-title">

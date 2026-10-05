@@ -1,5 +1,16 @@
+@php
+    // Locales offered in the language switcher: native name + ISO country code for the flag icon.
+    $siteLocales = [
+        'de' => ['name' => 'Deutsch', 'flag' => 'de', 'og' => 'de_DE'],
+        'en' => ['name' => 'English', 'flag' => 'gb', 'og' => 'en_US'],
+        'pl' => ['name' => 'Polski', 'flag' => 'pl', 'og' => 'pl_PL'],
+        'sk' => ['name' => 'Slovenčina', 'flag' => 'sk', 'og' => 'sk_SK'],
+        'ro' => ['name' => 'Română', 'flag' => 'ro', 'og' => 'ro_RO'],
+    ];
+    $currentLocale = array_key_exists(app()->getLocale(), $siteLocales) ? app()->getLocale() : 'de';
+@endphp
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="{{ $currentLocale }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +30,7 @@
     <meta property="og:title" content="@yield('og_title', __('layout.og_default_title'))">
     <meta property="og:description" content="@yield('og_description', __('layout.og_default_description'))">
     <meta property="og:image" content="@yield('og_image', asset('images/logo.png'))">
-    <meta property="og:locale" content="{{ app()->getLocale() === 'de' ? 'de_DE' : 'en_US' }}">
+    <meta property="og:locale" content="{{ $siteLocales[$currentLocale]['og'] }}">
     <meta property="og:site_name" content="Kaymakci Real Estate GmbH">
 
     {{-- Twitter Card --}}
@@ -91,14 +102,33 @@
                         <a href="{{ route('pages.about') }}" class="hover:text-gold-600 transition-colors">{{ __('layout.nav_about') }}</a>
                         <a href="{{ route('pages.contact') }}" class="hover:text-gold-600 transition-colors">{{ __('layout.nav_contact') }}</a>
                     </nav>
-                    <div class="flex items-center gap-1 text-sm font-medium border-l border-ivory-200 pl-6" role="navigation" aria-label="Sprachauswahl / Language selection">
-                        <a href="{{ route('locale.switch', 'de') }}"
-                           class="px-2 py-1 rounded transition-colors {{ app()->getLocale() === 'de' ? 'text-gold-600 font-bold' : 'text-ivory-400 hover:text-gold-600' }}"
-                           @if(app()->getLocale() === 'de') aria-current="true" @endif>DE</a>
-                        <span class="text-ivory-300">|</span>
-                        <a href="{{ route('locale.switch', 'en') }}"
-                           class="px-2 py-1 rounded transition-colors {{ app()->getLocale() === 'en' ? 'text-gold-600 font-bold' : 'text-ivory-400 hover:text-gold-600' }}"
-                           @if(app()->getLocale() === 'en') aria-current="true" @endif>EN</a>
+                    <div class="relative border-l border-ivory-200 pl-6" x-data="{ langOpen: false }" @click.away="langOpen = false" @keydown.escape.window="langOpen = false">
+                        <button type="button" @click="langOpen = !langOpen"
+                                class="flex items-center gap-2 text-sm font-medium text-ivory-700 hover:text-gold-600 transition-colors"
+                                :aria-expanded="langOpen" aria-haspopup="listbox" aria-label="Sprache wählen / Select language">
+                            <img src="https://flagcdn.com/{{ $siteLocales[$currentLocale]['flag'] }}.svg" width="20" height="15" alt="" class="w-5 h-auto rounded-sm shadow-sm" aria-hidden="true">
+                            <span>{{ strtoupper($currentLocale) }}</span>
+                            <svg class="w-3.5 h-3.5 text-ivory-400 transition-transform" :class="langOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div x-show="langOpen" x-cloak x-transition
+                             class="absolute right-0 mt-2 w-48 bg-ivory-50 border border-ivory-200 rounded-xl shadow-lift overflow-hidden z-20"
+                             role="listbox" aria-label="Sprache wählen / Select language">
+                            @foreach($siteLocales as $code => $info)
+                                <a href="{{ route('locale.switch', $code) }}"
+                                   class="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors {{ $currentLocale === $code ? 'bg-gold-50 text-gold-700 font-semibold' : 'text-ivory-700 hover:bg-ivory-100' }}"
+                                   role="option" @if($currentLocale === $code) aria-selected="true" @endif>
+                                    <img src="https://flagcdn.com/{{ $info['flag'] }}.svg" width="20" height="15" alt="" class="w-5 h-auto rounded-sm shadow-sm flex-shrink-0" aria-hidden="true">
+                                    <span>{{ $info['name'] }}</span>
+                                    @if($currentLocale === $code)
+                                        <svg class="w-4 h-4 ml-auto text-gold-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    @endif
+                                </a>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
 
@@ -122,14 +152,18 @@
                     <a href="{{ route('pages.about') }}" class="py-2.5 hover:text-gold-600 transition-colors">{{ __('layout.nav_about') }}</a>
                     <a href="{{ route('pages.contact') }}" class="py-2.5 hover:text-gold-600 transition-colors">{{ __('layout.nav_contact') }}</a>
                 </nav>
-                <div class="flex items-center gap-1 text-sm font-medium mt-2 pt-3 border-t border-ivory-200" role="navigation" aria-label="Sprachauswahl / Language selection">
-                    <a href="{{ route('locale.switch', 'de') }}"
-                       class="px-2 py-1 rounded transition-colors {{ app()->getLocale() === 'de' ? 'text-gold-600 font-bold' : 'text-ivory-400 hover:text-gold-600' }}"
-                       @if(app()->getLocale() === 'de') aria-current="true" @endif>DE</a>
-                    <span class="text-ivory-300">|</span>
-                    <a href="{{ route('locale.switch', 'en') }}"
-                       class="px-2 py-1 rounded transition-colors {{ app()->getLocale() === 'en' ? 'text-gold-600 font-bold' : 'text-ivory-400 hover:text-gold-600' }}"
-                       @if(app()->getLocale() === 'en') aria-current="true" @endif>EN</a>
+                <div class="mt-2 pt-3 border-t border-ivory-200">
+                    <span class="block text-xs font-semibold text-ivory-400 uppercase tracking-wide mb-2">Sprache / Language</span>
+                    <div class="grid grid-cols-2 gap-2" role="navigation" aria-label="Sprachauswahl / Language selection">
+                        @foreach($siteLocales as $code => $info)
+                            <a href="{{ route('locale.switch', $code) }}"
+                               class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors {{ $currentLocale === $code ? 'bg-gold-50 text-gold-700 font-semibold' : 'text-ivory-700 hover:bg-ivory-100' }}"
+                               @if($currentLocale === $code) aria-current="true" @endif>
+                                <img src="https://flagcdn.com/{{ $info['flag'] }}.svg" width="20" height="15" alt="" class="w-5 h-auto rounded-sm shadow-sm flex-shrink-0" aria-hidden="true">
+                                <span>{{ $info['name'] }}</span>
+                            </a>
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </div>

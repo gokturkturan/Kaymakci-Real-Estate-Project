@@ -1,9 +1,15 @@
 @extends('layouts.app')
 
 @php
-    $decimalSep = app()->getLocale() === 'de' ? ',' : '.';
-    $thousandSep = app()->getLocale() === 'de' ? '.' : ',';
+    $decimalSep = in_array(app()->getLocale(), ['de', 'pl', 'sk', 'ro'], true) ? ',' : '.';
+    $thousandSep = in_array(app()->getLocale(), ['de', 'pl', 'sk', 'ro'], true) ? '.' : ',';
     $priceFormatted = number_format($property->price, 2, $decimalSep, $thousandSep);
+
+    // BCP-47 tag for Intl.NumberFormat, and the matching flatpickr locale key ('default' = English).
+    $intlLocaleMap = ['de' => 'de-DE', 'en' => 'en-GB', 'pl' => 'pl-PL', 'sk' => 'sk-SK', 'ro' => 'ro-RO'];
+    $flatpickrLocaleMap = ['de' => 'de', 'en' => 'default', 'pl' => 'pl', 'sk' => 'sk', 'ro' => 'ro'];
+    $intlLocale = $intlLocaleMap[app()->getLocale()] ?? 'en-GB';
+    $flatpickrLocale = $flatpickrLocaleMap[app()->getLocale()] ?? 'default';
 @endphp
 
 @section('title', __('property.meta_title', ['title' => $property->localized_title, 'bedrooms' => $property->bedrooms, 'area' => $property->area, 'location' => $property->location]))
@@ -311,6 +317,9 @@
                 </style>
                 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
                 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pl.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/sk.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ro.js"></script>
                 <script>
                 function bookingForm() {
                     return {
@@ -331,7 +340,7 @@
                         },
 
                         formatPrice(price) {
-                            return new Intl.NumberFormat({{ Illuminate\Support\Js::from(app()->getLocale() === 'de' ? 'de-DE' : 'en-GB') }}, { style: 'currency', currency: 'EUR' }).format(price);
+                            return new Intl.NumberFormat({{ Illuminate\Support\Js::from($intlLocale) }}, { style: 'currency', currency: 'EUR' }).format(price);
                         },
 
                         async init() {
@@ -355,7 +364,7 @@
                             const today = new Date().toISOString().split('T')[0];
 
                             this.checkInPicker = flatpickr('#check_in', {
-                                locale: {{ Illuminate\Support\Js::from(app()->getLocale() === 'de' ? 'de' : 'default') }},
+                                locale: {{ Illuminate\Support\Js::from($flatpickrLocale) }},
                                 dateFormat: 'Y-m-d',
                                 minDate: today,
                                 disable: this.bookedDates,
@@ -375,7 +384,7 @@
                             });
 
                             this.checkOutPicker = flatpickr('#check_out', {
-                                locale: {{ Illuminate\Support\Js::from(app()->getLocale() === 'de' ? 'de' : 'default') }},
+                                locale: {{ Illuminate\Support\Js::from($flatpickrLocale) }},
                                 dateFormat: 'Y-m-d',
                                 minDate: today,
                                 disable: this.bookedDates,
