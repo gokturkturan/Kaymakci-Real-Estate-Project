@@ -32,22 +32,7 @@
                         <textarea id="description" name="description" rows="5" required
                                   class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
                                   placeholder="Ausführliche Beschreibung der Immobilie...">{{ old('description') }}</textarea>
-                    </div>
-
-                    <div class="md:col-span-2">
-                        <label for="title_en" class="block text-sm font-medium text-ivory-700 mb-1">Titel (Englisch) – optional</label>
-                        <input type="text" id="title_en" name="title_en" value="{{ old('title_en') }}"
-                               class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
-                               placeholder="z.B. Villa with lake view">
-                        <p class="text-xs text-ivory-500 mt-1">Wird auf der englischen Version der Website angezeigt. Wenn leer, wird der deutsche Titel verwendet.</p>
-                    </div>
-
-                    <div class="md:col-span-2">
-                        <label for="description_en" class="block text-sm font-medium text-ivory-700 mb-1">Beschreibung (Englisch) – optional</label>
-                        <textarea id="description_en" name="description_en" rows="5"
-                                  class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
-                                  placeholder="English property description...">{{ old('description_en') }}</textarea>
-                        <p class="text-xs text-ivory-500 mt-1">Wird auf der englischen Version der Website angezeigt. Wenn leer, wird die deutsche Beschreibung verwendet.</p>
+                        <p class="text-xs text-ivory-500 mt-1">Titel &amp; Beschreibung werden beim Speichern automatisch ins Englische, Polnische, Slowakische und Rumänische übersetzt – dafür gibt es keine eigenen Felder.</p>
                     </div>
 
                     <div>

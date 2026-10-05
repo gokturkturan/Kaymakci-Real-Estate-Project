@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Property;
 use App\Models\PropertyImage;
 use App\Models\PropertyVideo;
+use App\Support\PropertyTranslator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -27,9 +28,7 @@ class PropertyController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'title_en' => 'nullable|string|max:255',
             'description' => 'required|string',
-            'description_en' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'location' => 'required|string|max:255',
             'bedrooms' => 'required|integer|min:0',
@@ -52,6 +51,8 @@ class PropertyController extends Controller
 
         $property = Property::create($validated);
 
+        PropertyTranslator::syncTranslations($property);
+
         $this->storeNewMedia($request, $property, 0);
 
         return redirect()->route('admin.properties.index')
@@ -68,9 +69,7 @@ class PropertyController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'title_en' => 'nullable|string|max:255',
             'description' => 'required|string',
-            'description_en' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'location' => 'required|string|max:255',
             'bedrooms' => 'required|integer|min:0',
@@ -94,6 +93,8 @@ class PropertyController extends Controller
         }
 
         $property->update($validated);
+
+        PropertyTranslator::syncTranslations($property);
 
         $nextOrder = 0;
 

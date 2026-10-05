@@ -16,8 +16,14 @@ class Property extends Model
     protected $fillable = [
         'title',
         'title_en',
+        'title_pl',
+        'title_sk',
+        'title_ro',
         'description',
         'description_en',
+        'description_pl',
+        'description_sk',
+        'description_ro',
         'price',
         'location',
         'bedrooms',
@@ -114,16 +120,22 @@ class Property extends Model
 
     protected function localizedTitle(): Attribute
     {
-        return Attribute::get(
-            fn () => app()->getLocale() === 'en' && filled($this->title_en) ? $this->title_en : $this->title
-        );
+        return Attribute::get(function () {
+            $field = 'title_' . app()->getLocale();
+            return in_array(app()->getLocale(), ['en', 'pl', 'sk', 'ro'], true) && filled($this->{$field})
+                ? $this->{$field}
+                : $this->title;
+        });
     }
 
     protected function localizedDescription(): Attribute
     {
-        return Attribute::get(
-            fn () => app()->getLocale() === 'en' && filled($this->description_en) ? $this->description_en : $this->description
-        );
+        return Attribute::get(function () {
+            $field = 'description_' . app()->getLocale();
+            return in_array(app()->getLocale(), ['en', 'pl', 'sk', 'ro'], true) && filled($this->{$field})
+                ? $this->{$field}
+                : $this->description;
+        });
     }
 
     public function getMediaAttribute()
