@@ -16,7 +16,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('admin.properties.update', $property) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <form id="property-form" action="{{ route('admin.properties.update', $property) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
                 @method('PUT')
 
@@ -160,9 +160,13 @@
                        class="px-6 py-3 border border-ivory-300 rounded-lg text-ivory-700 hover:bg-ivory-100 transition-colors text-center font-medium">
                         Abbrechen
                     </a>
-                    <button type="submit"
-                            class="px-6 py-3 bg-gold-600 text-ivory-50 rounded-lg hover:bg-gold-700 transition-colors font-medium shadow-soft">
-                        Änderungen speichern
+                    <button type="submit" id="submit-btn"
+                            class="px-6 py-3 bg-gold-600 text-ivory-50 rounded-lg hover:bg-gold-700 transition-colors font-medium shadow-soft inline-flex items-center justify-center gap-2">
+                        <svg id="submit-spinner" class="hidden animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                        </svg>
+                        <span id="submit-btn-text">Änderungen speichern</span>
                     </button>
                 </div>
             </form>
@@ -426,5 +430,13 @@
                 preview.appendChild(card);
             });
         }
+
+        document.getElementById('property-form').addEventListener('submit', function () {
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+            document.getElementById('submit-spinner').classList.remove('hidden');
+            document.getElementById('submit-btn-text').textContent = 'Wird gespeichert – Übersetzung läuft...';
+        });
     </script>
 @endsection
