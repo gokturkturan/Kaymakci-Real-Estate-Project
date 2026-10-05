@@ -104,16 +104,16 @@
     <article class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10" itemscope itemtype="https://schema.org/RealEstateListing">
 
         <nav class="mb-6" aria-label="Breadcrumb">
-            <ol class="flex items-center gap-2 text-sm text-gray-500">
-                <li><a href="{{ route('properties.index') }}" class="hover:text-blue-600 transition">{{ __('property.breadcrumb_home') }}</a></li>
+            <ol class="flex items-center gap-2 text-sm text-ivory-500">
+                <li><a href="{{ route('properties.index') }}" class="hover:text-gold-700 transition-colors">{{ __('property.breadcrumb_home') }}</a></li>
                 <li><span aria-hidden="true">/</span></li>
-                <li><a href="{{ route('properties.index') }}" class="hover:text-blue-600 transition">{{ __('property.breadcrumb_listings') }}</a></li>
+                <li><a href="{{ route('properties.index') }}" class="hover:text-gold-700 transition-colors">{{ __('property.breadcrumb_listings') }}</a></li>
                 <li><span aria-hidden="true">/</span></li>
-                <li class="text-gray-900 font-medium" aria-current="page">{{ Str::limit($property->localized_title, 30) }}</li>
+                <li class="text-ivory-900 font-medium" aria-current="page">{{ Str::limit($property->localized_title, 30) }}</li>
             </ol>
         </nav>
 
-        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="bg-ivory-50 rounded-2xl shadow-soft border border-ivory-200 overflow-hidden">
             {{-- Media Gallery (images + videos combined, in admin-defined order) --}}
             @php
                 $media = $property->media;
@@ -121,7 +121,7 @@
             @if($media->count() > 0)
                 <div class="relative" id="property-gallery" x-data="{ currentSlide: 0, totalSlides: {{ $media->count() }} }" x-effect="currentSlide, pauseInactiveVideos($el, currentSlide)">
                     {{-- Main Media --}}
-                    <div class="aspect-video bg-gray-200 overflow-hidden relative">
+                    <div class="aspect-video bg-ivory-200 overflow-hidden relative">
                         @foreach($media as $index => $item)
                             @if($item['type'] === 'image')
                                 <img src="{{ $item['url'] }}"
@@ -143,14 +143,14 @@
                         {{-- Navigation Arrows --}}
                         @if($media->count() > 1)
                             <button @click="currentSlide = (currentSlide - 1 + totalSlides) % totalSlides"
-                                    class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition"
+                                    class="absolute left-4 top-1/2 -translate-y-1/2 bg-navy-950/50 hover:bg-navy-950/70 text-white p-3 rounded-full transition"
                                     aria-label="{{ __('property.gallery_prev_aria') }}">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                 </svg>
                             </button>
                             <button @click="currentSlide = (currentSlide + 1) % totalSlides"
-                                    class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 bg-navy-950/50 hover:bg-navy-950/70 text-white p-3 rounded-full transition"
                                     aria-label="{{ __('property.gallery_next_aria') }}">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -158,7 +158,7 @@
                             </button>
 
                             {{-- Counter --}}
-                            <div class="absolute bottom-4 right-4 bg-black/60 text-white text-sm px-3 py-1 rounded-full">
+                            <div class="absolute bottom-4 right-4 bg-navy-950/70 text-white text-sm px-3 py-1 rounded-full">
                                 <span x-text="currentSlide + 1"></span> / {{ $media->count() }}
                             </div>
                         @endif
@@ -166,16 +166,16 @@
 
                     {{-- Thumbnail Navigation --}}
                     @if($media->count() > 1)
-                        <div class="flex gap-2 p-4 bg-gray-100 overflow-x-auto">
+                        <div class="flex gap-2 p-4 bg-ivory-100 overflow-x-auto">
                             @foreach($media as $index => $item)
                                 <button @click="currentSlide = {{ $index }}"
                                         class="relative flex-shrink-0 w-20 h-14 rounded overflow-hidden border-2 transition"
-                                        :class="currentSlide === {{ $index }} ? 'border-blue-600' : 'border-transparent hover:border-gray-300'">
+                                        :class="currentSlide === {{ $index }} ? 'border-gold-600' : 'border-transparent hover:border-ivory-300'">
                                     @if($item['type'] === 'image')
                                         <img src="{{ $item['url'] }}" alt="{{ __('property.gallery_thumbnail_alt', ['index' => $index + 1]) }}" class="w-full h-full object-cover">
                                     @else
                                         <video src="{{ $item['url'] }}" class="w-full h-full object-cover pointer-events-none" muted preload="metadata"></video>
-                                        <span class="absolute inset-0 flex items-center justify-center bg-black/30">
+                                        <span class="absolute inset-0 flex items-center justify-center bg-navy-950/40">
                                             <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                                                 <path d="M6.3 3.7a1 1 0 011.03-.05l9 5.5a1 1 0 010 1.7l-9 5.5A1 1 0 016 15.5v-11a1 1 0 01.3-.8z"/>
                                             </svg>
@@ -197,8 +197,8 @@
                     }
                 </script>
             @else
-                <figure class="aspect-video bg-gray-200 overflow-hidden">
-                    <div class="w-full h-full flex items-center justify-center text-gray-400" aria-label="{{ __('property.gallery_no_image') }}">
+                <figure class="aspect-video bg-ivory-200 overflow-hidden">
+                    <div class="w-full h-full flex items-center justify-center text-ivory-400" aria-label="{{ __('property.gallery_no_image') }}">
                         <svg class="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 22V12h6v10"/>
@@ -210,62 +210,62 @@
             <div class="p-5 sm:p-8">
                 <header class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900" itemprop="name">{{ $property->localized_title }}</h1>
-                        <p class="text-gray-500 mt-1" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+                        <h1 class="font-serif text-2xl sm:text-4xl font-semibold text-ivory-900" itemprop="name">{{ $property->localized_title }}</h1>
+                        <p class="text-ivory-500 mt-1" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
                             <span itemprop="addressLocality">{{ $property->location }}</span>
                         </p>
                     </div>
-                    <p class="text-3xl font-bold text-blue-600 whitespace-nowrap" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                    <p class="font-serif text-3xl font-bold text-gold-700 whitespace-nowrap" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
                         <span itemprop="price" content="{{ $property->price }}">{{ $priceFormatted }}</span>
                         <span itemprop="priceCurrency" content="EUR">€</span>
-                        <span class="block text-sm font-medium text-gray-500">{{ __('property.price_suffix_per_person_night') }}</span>
+                        <span class="block text-sm font-medium text-ivory-500">{{ __('property.price_suffix_per_person_night') }}</span>
                         <meta itemprop="availability" content="https://schema.org/InStock">
                     </p>
                 </header>
 
-                <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 p-4 bg-gray-50 rounded-lg mb-8" aria-label="{{ __('property.stats_aria_label') }}">
+                <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 p-4 sm:p-6 bg-ivory-100 rounded-xl mb-8" aria-label="{{ __('property.stats_aria_label') }}">
                     <div class="text-center">
-                        <p class="text-2xl font-bold text-gray-900" itemprop="numberOfRooms">{{ $property->bedrooms }}</p>
-                        <p class="text-sm text-gray-500">{{ __('property.stats_rooms') }}</p>
+                        <p class="font-serif text-2xl font-bold text-ivory-900" itemprop="numberOfRooms">{{ $property->bedrooms }}</p>
+                        <p class="text-sm text-ivory-500">{{ __('property.stats_rooms') }}</p>
                     </div>
                     <div class="text-center">
-                        <p class="text-2xl font-bold text-gray-900" itemprop="numberOfBathroomsTotal">{{ $property->bathrooms }}</p>
-                        <p class="text-sm text-gray-500">{{ __('property.stats_bath') }}</p>
+                        <p class="font-serif text-2xl font-bold text-ivory-900" itemprop="numberOfBathroomsTotal">{{ $property->bathrooms }}</p>
+                        <p class="text-sm text-ivory-500">{{ __('property.stats_bath') }}</p>
                     </div>
                     <div class="text-center">
-                        <p class="text-2xl font-bold text-gray-900">{{ $property->area }}</p>
-                        <p class="text-sm text-gray-500">m²</p>
+                        <p class="font-serif text-2xl font-bold text-ivory-900">{{ $property->area }}</p>
+                        <p class="text-sm text-ivory-500">m²</p>
                         <meta itemprop="floorSize" content="{{ $property->area }} MTK">
                     </div>
                     @if($property->king_size_bed_count > 0)
                         <div class="text-center">
-                            <p class="text-2xl font-bold text-gray-900">{{ $property->king_size_bed_count }}</p>
-                            <p class="text-sm text-gray-500">{{ $property->king_size_bed_count > 1 ? __('property.stats_king_size_beds') : __('property.stats_king_size_bed') }}</p>
+                            <p class="font-serif text-2xl font-bold text-ivory-900">{{ $property->king_size_bed_count }}</p>
+                            <p class="text-sm text-ivory-500">{{ $property->king_size_bed_count > 1 ? __('property.stats_king_size_beds') : __('property.stats_king_size_bed') }}</p>
                         </div>
                     @endif
                     @if($property->single_bed_count > 0)
                         <div class="text-center">
-                            <p class="text-2xl font-bold text-gray-900">{{ $property->single_bed_count }}</p>
-                            <p class="text-sm text-gray-500">{{ $property->single_bed_count > 1 ? __('property.stats_single_beds') : __('property.stats_single_bed') }}</p>
+                            <p class="font-serif text-2xl font-bold text-ivory-900">{{ $property->single_bed_count }}</p>
+                            <p class="text-sm text-ivory-500">{{ $property->single_bed_count > 1 ? __('property.stats_single_beds') : __('property.stats_single_bed') }}</p>
                         </div>
                     @endif
                     <div class="text-center">
-                        <p class="text-2xl font-bold text-gray-900">{{ $property->has_parking ? __('property.stats_yes') : __('property.stats_no') }}</p>
-                        <p class="text-sm text-gray-500">{{ __('property.stats_parking') }}</p>
+                        <p class="font-serif text-2xl font-bold text-ivory-900">{{ $property->has_parking ? __('property.stats_yes') : __('property.stats_no') }}</p>
+                        <p class="text-sm text-ivory-500">{{ __('property.stats_parking') }}</p>
                     </div>
                 </section>
 
                 <section aria-labelledby="description-title">
-                    <h2 id="description-title" class="text-xl font-semibold text-gray-900 mb-3">{{ __('property.description_heading') }}</h2>
-                    <div class="text-gray-600 leading-relaxed whitespace-pre-line" itemprop="description">{{ $property->localized_description }}</div>
+                    <h2 id="description-title" class="font-serif text-xl sm:text-2xl font-semibold text-ivory-900 mb-3">{{ __('property.description_heading') }}</h2>
+                    <div class="text-ivory-700 leading-relaxed whitespace-pre-line" itemprop="description">{{ $property->localized_description }}</div>
                 </section>
 
                 @if($property->latitude !== null && $property->longitude !== null)
                     <section class="mt-8" aria-labelledby="map-title">
-                        <h2 id="map-title" class="text-xl font-semibold text-gray-900 mb-3">{{ __('property.map_heading') }}</h2>
+                        <h2 id="map-title" class="font-serif text-xl sm:text-2xl font-semibold text-ivory-900 mb-3">{{ __('property.map_heading') }}</h2>
                         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-                        <div id="property-map" class="h-96 rounded-lg border border-gray-200" aria-label="{{ __('property.map_aria_label', ['location' => $property->location]) }}"></div>
-                        <p class="text-xs text-gray-500 mt-2">{{ __('property.map_attribution') }}</p>
+                        <div id="property-map" class="h-96 rounded-xl border border-ivory-200" aria-label="{{ __('property.map_aria_label', ['location' => $property->location]) }}"></div>
+                        <p class="text-xs text-ivory-500 mt-2">{{ __('property.map_attribution') }}</p>
                         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
@@ -301,12 +301,12 @@
                         background: #b91c1c !important;
                     }
                     .flatpickr-day.selected {
-                        background: #2563eb !important;
-                        border-color: #2563eb !important;
+                        background: #b8732e !important;
+                        border-color: #b8732e !important;
                     }
                     .flatpickr-day.inRange {
-                        background: #bfdbfe !important;
-                        border-color: #bfdbfe !important;
+                        background: #f5e1c6 !important;
+                        border-color: #f5e1c6 !important;
                     }
                 </style>
                 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -428,18 +428,18 @@
                     }
                 }
                 </script>
-                <section class="mt-8 p-4 sm:p-6 bg-blue-50 rounded-lg" aria-label="{{ __('property.booking_heading') }}" x-data="bookingForm()">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ __('property.booking_heading') }}</h3>
-                    <p class="text-gray-600 mb-4">{{ __('property.booking_subheading') }}</p>
+                <section class="mt-8 p-5 sm:p-8 bg-gold-50 rounded-2xl" aria-label="{{ __('property.booking_heading') }}" x-data="bookingForm()">
+                    <h3 class="font-serif text-lg sm:text-xl font-semibold text-ivory-900 mb-2">{{ __('property.booking_heading') }}</h3>
+                    <p class="text-ivory-700 mb-4">{{ __('property.booking_subheading') }}</p>
 
                     @if(session('success'))
-                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4">
+                        <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-lg mb-4">
                             {{ session('success') }}
                         </div>
                     @endif
 
                     @if(session('error'))
-                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
+                        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-4">
                             {{ session('error') }}
                         </div>
                     @endif
@@ -450,10 +450,10 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {{-- Check-in Date --}}
                             <div>
-                                <label for="check_in" class="block text-sm font-medium text-gray-700 mb-1">{{ __('property.booking_checkin_label') }}</label>
+                                <label for="check_in" class="block text-sm font-medium text-ivory-700 mb-1">{{ __('property.booking_checkin_label') }}</label>
                                 <input type="text" id="check_in" name="check_in" required readonly
                                        placeholder="{{ __('property.booking_date_placeholder') }}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white cursor-pointer">
+                                       class="w-full px-4 py-3 border border-ivory-300 rounded-lg focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none bg-white cursor-pointer">
                                 @error('check_in')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -461,10 +461,10 @@
 
                             {{-- Check-out Date --}}
                             <div>
-                                <label for="check_out" class="block text-sm font-medium text-gray-700 mb-1">{{ __('property.booking_checkout_label') }}</label>
+                                <label for="check_out" class="block text-sm font-medium text-ivory-700 mb-1">{{ __('property.booking_checkout_label') }}</label>
                                 <input type="text" id="check_out" name="check_out" required readonly
                                        placeholder="{{ __('property.booking_date_placeholder') }}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white cursor-pointer">
+                                       class="w-full px-4 py-3 border border-ivory-300 rounded-lg focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none bg-white cursor-pointer">
                                 @error('check_out')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -472,12 +472,12 @@
                         </div>
 
                         {{-- Date validation message --}}
-                        <div x-show="dateError" x-cloak class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+                        <div x-show="dateError" x-cloak class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
                             <p x-text="dateError"></p>
                         </div>
 
                         {{-- Nights info --}}
-                        <div x-show="nights > 0 && !dateError" x-cloak class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
+                        <div x-show="nights > 0 && !dateError" x-cloak class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-lg">
                             <p><span x-text="nights"></span> {{ __('property.booking_nights_suffix') }}</p>
                             <p class="mt-1 font-semibold">{{ __('property.booking_total_price_label') }} <span x-text="formatPrice(totalPrice)"></span></p>
                             <p class="text-sm">{{ __('property.booking_price_per_person_night', ['price' => $priceFormatted . ' €']) }}</p>
@@ -486,9 +486,9 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {{-- Name --}}
                             <div>
-                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">{{ __('property.booking_name_label') }}</label>
+                                <label for="name" class="block text-sm font-medium text-ivory-700 mb-1">{{ __('property.booking_name_label') }}</label>
                                 <input type="text" id="name" name="name" required value="{{ old('name') }}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                       class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
                                        placeholder="{{ __('property.booking_name_placeholder') }}">
                                 @error('name')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -497,9 +497,9 @@
 
                             {{-- Email --}}
                             <div>
-                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">{{ __('property.booking_email_label') }}</label>
+                                <label for="email" class="block text-sm font-medium text-ivory-700 mb-1">{{ __('property.booking_email_label') }}</label>
                                 <input type="email" id="email" name="email" required value="{{ old('email') }}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                       class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
                                        placeholder="{{ __('property.booking_email_placeholder') }}">
                                 @error('email')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -510,9 +510,9 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {{-- Phone --}}
                             <div>
-                                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">{{ __('property.booking_phone_label') }}</label>
+                                <label for="phone" class="block text-sm font-medium text-ivory-700 mb-1">{{ __('property.booking_phone_label') }}</label>
                                 <input type="tel" id="phone" name="phone" value="{{ old('phone') }}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                       class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
                                        placeholder="{{ __('property.booking_phone_placeholder') }}">
                                 @error('phone')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -521,9 +521,9 @@
 
                             {{-- Guests --}}
                             <div>
-                                <label for="guests" class="block text-sm font-medium text-gray-700 mb-1">{{ __('property.booking_guests_label') }}</label>
+                                <label for="guests" class="block text-sm font-medium text-ivory-700 mb-1">{{ __('property.booking_guests_label') }}</label>
                                 <select id="guests" name="guests" required x-model.number="guests"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition">
                                     @for($i = 1; $i <= 10; $i++)
                                         <option value="{{ $i }}" {{ old('guests', 1) == $i ? 'selected' : '' }}>{{ $i }} {{ $i === 1 ? __('property.booking_guest_singular') : __('property.booking_guest_plural') }}</option>
                                     @endfor
@@ -536,9 +536,9 @@
 
                         {{-- Message --}}
                         <div>
-                            <label for="message" class="block text-sm font-medium text-gray-700 mb-1">{{ __('property.booking_message_label') }}</label>
+                            <label for="message" class="block text-sm font-medium text-ivory-700 mb-1">{{ __('property.booking_message_label') }}</label>
                             <textarea id="message" name="message" rows="3"
-                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                      class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
                                       placeholder="{{ __('property.booking_message_placeholder') }}">{{ old('message') }}</textarea>
                             @error('message')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -547,12 +547,12 @@
 
                         <button type="submit"
                                 :disabled="!isValid"
-                                class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed">
+                                class="w-full bg-gold-600 text-ivory-50 px-6 py-3 rounded-lg font-medium hover:bg-gold-700 transition-colors disabled:bg-ivory-300 disabled:cursor-not-allowed shadow-soft">
                             {{ __('property.booking_submit') }}
                         </button>
                     </form>
 
-                    <p class="text-sm text-gray-500 mt-4">
+                    <p class="text-sm text-ivory-500 mt-4">
                         {{ __('property.booking_disclaimer') }}
                     </p>
                 </section>

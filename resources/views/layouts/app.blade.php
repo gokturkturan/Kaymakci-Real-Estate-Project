@@ -36,44 +36,75 @@
     {{-- Structured Data --}}
     @yield('structured_data')
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    {{-- Fonts --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @else
+        {{-- Fallback while assets aren't built yet (no `npm run build` / `npm run dev`): Tailwind Play CDN with the same theme tokens --}}
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ['Instrument Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                            serif: ['Playfair Display', 'Iowan Old Style', 'Georgia', 'ui-serif', 'serif'],
+                        },
+                        colors: {
+                            ivory: { 50:'#fdfbf7', 100:'#faf6ee', 200:'#f3ead7', 300:'#e6d6b8', 400:'#cdb690', 500:'#ab9273', 600:'#8a7560', 700:'#6b5c4d', 800:'#46392f', 900:'#241d19', 950:'#14100d' },
+                            gold: { 50:'#fbf1e6', 100:'#f5e1c6', 200:'#eac28c', 300:'#dda35a', 400:'#cb8a3e', 500:'#b8732e', 600:'#995f26', 700:'#7a4b1f', 800:'#5c3917', 900:'#3e270f' },
+                            navy: { 50:'#eff1fb', 100:'#dee4f7', 200:'#b9c5ee', 300:'#8499e1', 400:'#4766d2', 500:'#2a47ac', 600:'#203683', 700:'#192b66', 800:'#121f4a', 900:'#0d1635', 950:'#080e21' },
+                        },
+                        boxShadow: {
+                            soft: '0 1px 2px rgba(13,22,53,0.05), 0 8px 24px -8px rgba(13,22,53,0.14)',
+                            lift: '0 2px 4px rgba(13,22,53,0.06), 0 20px 48px -14px rgba(13,22,53,0.22)',
+                        },
+                    },
+                },
+            };
+        </script>
+    @endif
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>[x-cloak]{display:none !important;}</style>
 
     {{-- Favicon --}}
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
+<body class="bg-ivory-50 text-ivory-900 min-h-screen flex flex-col font-sans antialiased">
 
-    <header class="bg-white shadow-sm" role="banner" x-data="{ mobileOpen: false }" @keydown.escape.window="mobileOpen = false">
+    <header class="sticky top-0 z-50 bg-ivory-50/95 backdrop-blur-sm border-b border-ivory-200" role="banner" x-data="{ mobileOpen: false }" @keydown.escape.window="mobileOpen = false">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16 sm:h-20 gap-3">
                 <a href="{{ route('properties.index') }}" class="flex items-center gap-2 sm:gap-3 min-w-0" aria-label="{{ __('layout.home_aria') }}">
-                    <img src="{{ asset('images/logo.png') }}" alt="Kaymakci Real Estate Logo" class="h-10 sm:h-16 w-auto flex-shrink-0">
-                    <span class="text-base sm:text-xl font-bold text-gray-900 truncate">Kaymakci Real Estate</span>
+                    <img src="{{ asset('images/logo.png') }}" alt="Kaymakci Real Estate Logo" class="h-10 sm:h-14 w-auto flex-shrink-0">
+                    <span class="font-serif text-base sm:text-xl font-semibold text-navy-900 truncate tracking-tight">Kaymakci Real Estate</span>
                 </a>
 
                 {{-- Desktop navigation --}}
-                <div class="hidden md:flex items-center gap-6">
-                    <nav class="flex gap-6 text-sm font-medium text-gray-600" role="navigation" aria-label="{{ __('layout.main_nav_aria') }}">
-                        <a href="{{ route('properties.index') }}" class="hover:text-blue-600 transition">{{ __('layout.nav_properties') }}</a>
-                        <a href="{{ route('pages.about') }}" class="hover:text-blue-600 transition">{{ __('layout.nav_about') }}</a>
-                        <a href="{{ route('pages.contact') }}" class="hover:text-blue-600 transition">{{ __('layout.nav_contact') }}</a>
+                <div class="hidden md:flex items-center gap-8">
+                    <nav class="flex gap-8 text-sm font-medium text-ivory-700" role="navigation" aria-label="{{ __('layout.main_nav_aria') }}">
+                        <a href="{{ route('properties.index') }}" class="hover:text-gold-600 transition-colors">{{ __('layout.nav_properties') }}</a>
+                        <a href="{{ route('pages.about') }}" class="hover:text-gold-600 transition-colors">{{ __('layout.nav_about') }}</a>
+                        <a href="{{ route('pages.contact') }}" class="hover:text-gold-600 transition-colors">{{ __('layout.nav_contact') }}</a>
                     </nav>
-                    <div class="flex items-center gap-1 text-sm font-medium border-l border-gray-200 pl-6" role="navigation" aria-label="Sprachauswahl / Language selection">
+                    <div class="flex items-center gap-1 text-sm font-medium border-l border-ivory-200 pl-6" role="navigation" aria-label="Sprachauswahl / Language selection">
                         <a href="{{ route('locale.switch', 'de') }}"
-                           class="px-2 py-1 rounded transition {{ app()->getLocale() === 'de' ? 'text-blue-600 font-bold' : 'text-gray-400 hover:text-blue-600' }}"
+                           class="px-2 py-1 rounded transition-colors {{ app()->getLocale() === 'de' ? 'text-gold-600 font-bold' : 'text-ivory-400 hover:text-gold-600' }}"
                            @if(app()->getLocale() === 'de') aria-current="true" @endif>DE</a>
-                        <span class="text-gray-300">|</span>
+                        <span class="text-ivory-300">|</span>
                         <a href="{{ route('locale.switch', 'en') }}"
-                           class="px-2 py-1 rounded transition {{ app()->getLocale() === 'en' ? 'text-blue-600 font-bold' : 'text-gray-400 hover:text-blue-600' }}"
+                           class="px-2 py-1 rounded transition-colors {{ app()->getLocale() === 'en' ? 'text-gold-600 font-bold' : 'text-ivory-400 hover:text-gold-600' }}"
                            @if(app()->getLocale() === 'en') aria-current="true" @endif>EN</a>
                     </div>
                 </div>
 
                 {{-- Mobile hamburger --}}
                 <button type="button" @click="mobileOpen = !mobileOpen"
-                        class="md:hidden inline-flex items-center justify-center p-2 -mr-2 rounded-lg text-gray-600 hover:bg-gray-100 flex-shrink-0"
+                        class="md:hidden inline-flex items-center justify-center p-2 -mr-2 rounded-lg text-ivory-700 hover:bg-ivory-100 flex-shrink-0"
                         :aria-expanded="mobileOpen" aria-label="{{ __('layout.main_nav_aria') }}">
                     <svg x-show="!mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
@@ -85,19 +116,19 @@
             </div>
 
             {{-- Mobile navigation panel --}}
-            <div x-show="mobileOpen" x-cloak x-transition class="md:hidden border-t border-gray-100 py-3">
-                <nav class="flex flex-col text-sm font-medium text-gray-700" role="navigation" aria-label="{{ __('layout.main_nav_aria') }}">
-                    <a href="{{ route('properties.index') }}" class="py-2.5 hover:text-blue-600 transition">{{ __('layout.nav_properties') }}</a>
-                    <a href="{{ route('pages.about') }}" class="py-2.5 hover:text-blue-600 transition">{{ __('layout.nav_about') }}</a>
-                    <a href="{{ route('pages.contact') }}" class="py-2.5 hover:text-blue-600 transition">{{ __('layout.nav_contact') }}</a>
+            <div x-show="mobileOpen" x-cloak x-transition class="md:hidden border-t border-ivory-200 py-3">
+                <nav class="flex flex-col text-sm font-medium text-ivory-700" role="navigation" aria-label="{{ __('layout.main_nav_aria') }}">
+                    <a href="{{ route('properties.index') }}" class="py-2.5 hover:text-gold-600 transition-colors">{{ __('layout.nav_properties') }}</a>
+                    <a href="{{ route('pages.about') }}" class="py-2.5 hover:text-gold-600 transition-colors">{{ __('layout.nav_about') }}</a>
+                    <a href="{{ route('pages.contact') }}" class="py-2.5 hover:text-gold-600 transition-colors">{{ __('layout.nav_contact') }}</a>
                 </nav>
-                <div class="flex items-center gap-1 text-sm font-medium mt-2 pt-3 border-t border-gray-100" role="navigation" aria-label="Sprachauswahl / Language selection">
+                <div class="flex items-center gap-1 text-sm font-medium mt-2 pt-3 border-t border-ivory-200" role="navigation" aria-label="Sprachauswahl / Language selection">
                     <a href="{{ route('locale.switch', 'de') }}"
-                       class="px-2 py-1 rounded transition {{ app()->getLocale() === 'de' ? 'text-blue-600 font-bold' : 'text-gray-400 hover:text-blue-600' }}"
+                       class="px-2 py-1 rounded transition-colors {{ app()->getLocale() === 'de' ? 'text-gold-600 font-bold' : 'text-ivory-400 hover:text-gold-600' }}"
                        @if(app()->getLocale() === 'de') aria-current="true" @endif>DE</a>
-                    <span class="text-gray-300">|</span>
+                    <span class="text-ivory-300">|</span>
                     <a href="{{ route('locale.switch', 'en') }}"
-                       class="px-2 py-1 rounded transition {{ app()->getLocale() === 'en' ? 'text-blue-600 font-bold' : 'text-gray-400 hover:text-blue-600' }}"
+                       class="px-2 py-1 rounded transition-colors {{ app()->getLocale() === 'en' ? 'text-gold-600 font-bold' : 'text-ivory-400 hover:text-gold-600' }}"
                        @if(app()->getLocale() === 'en') aria-current="true" @endif>EN</a>
                 </div>
             </div>
@@ -108,18 +139,18 @@
         @yield('content')
     </main>
 
-    <footer class="bg-gray-900 text-gray-400 py-10 mt-12" role="contentinfo">
+    <footer class="bg-gradient-to-b from-navy-900 to-navy-950 text-ivory-300 py-12 mt-12" role="contentinfo">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="bg-white rounded-2xl p-3 inline-block mb-4">
+            <div class="bg-ivory-50 rounded-2xl p-3 inline-block mb-4 shadow-lift">
                 <img src="{{ asset('images/logo.png') }}" alt="Kaymakci Real Estate Logo" class="h-14 w-auto">
             </div>
-            <p class="text-sm text-gray-300">{{ __('layout.footer_tagline') }}</p>
+            <p class="text-sm font-serif text-ivory-200">{{ __('layout.footer_tagline') }}</p>
 
             {{-- Social & Contact Links --}}
             <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8">
                 {{-- Instagram --}}
                 <a href="https://www.instagram.com/kaymakci_realestate" target="_blank" rel="noopener noreferrer"
-                   class="inline-flex items-center gap-2 text-gray-400 hover:text-pink-500 transition">
+                   class="inline-flex items-center gap-2 text-ivory-400 hover:text-gold-400 transition-colors">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                     </svg>
@@ -128,7 +159,7 @@
 
                 {{-- Email --}}
                 <a href="mailto:ali@kaymakci-real-estate.de"
-                   class="inline-flex items-center gap-2 text-gray-400 hover:text-blue-400 transition">
+                   class="inline-flex items-center gap-2 text-ivory-400 hover:text-gold-400 transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>
@@ -136,7 +167,7 @@
                 </a>
             </div>
 
-            <p class="text-xs mt-4 text-gray-500">&copy; {{ date('Y') }} Kaymakci Real Estate GmbH. {{ __('layout.footer_rights') }}</p>
+            <p class="text-xs mt-4 text-ivory-500">&copy; {{ date('Y') }} Kaymakci Real Estate GmbH. {{ __('layout.footer_rights') }}</p>
         </div>
     </footer>
 

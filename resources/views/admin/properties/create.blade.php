@@ -5,9 +5,9 @@
 
 @section('content')
     <div class="max-w-4xl">
-        <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6">
+        <div class="bg-ivory-50 rounded-2xl shadow-soft border border-ivory-200 p-4 sm:p-6">
             @if($errors->any())
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+                <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">
                     <ul class="list-disc list-inside">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -21,120 +21,120 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="md:col-span-2">
-                        <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Titel *</label>
+                        <label for="title" class="block text-sm font-medium text-ivory-700 mb-1">Titel *</label>
                         <input type="text" id="title" name="title" required value="{{ old('title') }}"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
                                placeholder="z.B. Villa mit Seeblick">
                     </div>
 
                     <div class="md:col-span-2">
-                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Beschreibung *</label>
+                        <label for="description" class="block text-sm font-medium text-ivory-700 mb-1">Beschreibung *</label>
                         <textarea id="description" name="description" rows="5" required
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
                                   placeholder="Ausführliche Beschreibung der Immobilie...">{{ old('description') }}</textarea>
                     </div>
 
                     <div class="md:col-span-2">
-                        <label for="title_en" class="block text-sm font-medium text-gray-700 mb-1">Titel (Englisch) – optional</label>
+                        <label for="title_en" class="block text-sm font-medium text-ivory-700 mb-1">Titel (Englisch) – optional</label>
                         <input type="text" id="title_en" name="title_en" value="{{ old('title_en') }}"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
                                placeholder="z.B. Villa with lake view">
-                        <p class="text-xs text-gray-500 mt-1">Wird auf der englischen Version der Website angezeigt. Wenn leer, wird der deutsche Titel verwendet.</p>
+                        <p class="text-xs text-ivory-500 mt-1">Wird auf der englischen Version der Website angezeigt. Wenn leer, wird der deutsche Titel verwendet.</p>
                     </div>
 
                     <div class="md:col-span-2">
-                        <label for="description_en" class="block text-sm font-medium text-gray-700 mb-1">Beschreibung (Englisch) – optional</label>
+                        <label for="description_en" class="block text-sm font-medium text-ivory-700 mb-1">Beschreibung (Englisch) – optional</label>
                         <textarea id="description_en" name="description_en" rows="5"
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
                                   placeholder="English property description...">{{ old('description_en') }}</textarea>
-                        <p class="text-xs text-gray-500 mt-1">Wird auf der englischen Version der Website angezeigt. Wenn leer, wird die deutsche Beschreibung verwendet.</p>
+                        <p class="text-xs text-ivory-500 mt-1">Wird auf der englischen Version der Website angezeigt. Wenn leer, wird die deutsche Beschreibung verwendet.</p>
                     </div>
 
                     <div>
-                        <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Preis pro Person / Nacht (EUR) *</label>
+                        <label for="price" class="block text-sm font-medium text-ivory-700 mb-1">Preis pro Person / Nacht (EUR) *</label>
                         <input type="number" id="price" name="price" required value="{{ old('price') }}" min="0" step="0.01"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
                                placeholder="z.B. 99,00">
                     </div>
 
                     <div>
-                        <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Standort *</label>
+                        <label for="location" class="block text-sm font-medium text-ivory-700 mb-1">Standort *</label>
                         <input type="text" id="location" name="location" required value="{{ old('location') }}"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
                                placeholder="z.B. Mainzer Landstraße 50, 60329 Frankfurt am Main">
-                        <p class="text-xs text-gray-500 mt-1">Die vollständige Adresse wird automatisch für die Karte verwendet.</p>
+                        <p class="text-xs text-ivory-500 mt-1">Die vollständige Adresse wird automatisch für die Karte verwendet.</p>
                     </div>
 
                     <div>
-                        <label for="bedrooms" class="block text-sm font-medium text-gray-700 mb-1">Zimmer *</label>
+                        <label for="bedrooms" class="block text-sm font-medium text-ivory-700 mb-1">Zimmer *</label>
                         <input type="number" id="bedrooms" name="bedrooms" required value="{{ old('bedrooms') }}" min="0"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
                                placeholder="z.B. 4">
                     </div>
 
                     <div>
-                        <label for="bathrooms" class="block text-sm font-medium text-gray-700 mb-1">Badezimmer *</label>
+                        <label for="bathrooms" class="block text-sm font-medium text-ivory-700 mb-1">Badezimmer *</label>
                         <input type="number" id="bathrooms" name="bathrooms" required value="{{ old('bathrooms') }}" min="0"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
                                placeholder="z.B. 2">
                     </div>
 
                     <div>
-                        <label for="area" class="block text-sm font-medium text-gray-700 mb-1">Fläche (m²) *</label>
+                        <label for="area" class="block text-sm font-medium text-ivory-700 mb-1">Fläche (m²) *</label>
                         <input type="number" id="area" name="area" required value="{{ old('area') }}" min="0" step="0.5"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
                                placeholder="z.B. 150">
                     </div>
 
                     <div>
-                        <label for="king_size_bed_count" class="block text-sm font-medium text-gray-700 mb-1">King Size Betten</label>
+                        <label for="king_size_bed_count" class="block text-sm font-medium text-ivory-700 mb-1">King Size Betten</label>
                         <input type="number" id="king_size_bed_count" name="king_size_bed_count" required value="{{ old('king_size_bed_count', 0) }}" min="0"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
                                placeholder="z.B. 1">
                     </div>
 
                     <div>
-                        <label for="single_bed_count" class="block text-sm font-medium text-gray-700 mb-1">Einzelbetten</label>
+                        <label for="single_bed_count" class="block text-sm font-medium text-ivory-700 mb-1">Einzelbetten</label>
                         <input type="number" id="single_bed_count" name="single_bed_count" required value="{{ old('single_bed_count', 0) }}" min="0"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               class="w-full px-4 py-3 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none transition"
                                placeholder="z.B. 2">
                     </div>
 
                     <div class="flex items-center">
                         <label class="flex items-center gap-3 cursor-pointer select-none">
                             <input type="checkbox" id="has_parking" name="has_parking" value="1" {{ old('has_parking') ? 'checked' : '' }}
-                                   class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
-                            <span class="text-sm font-medium text-gray-700">Parkplatz vorhanden</span>
+                                   class="w-5 h-5 text-gold-600 border-ivory-300 rounded focus:ring-2 focus:ring-gold-400">
+                            <span class="text-sm font-medium text-ivory-700">Parkplatz vorhanden</span>
                         </label>
                     </div>
 
                     <div class="md:col-span-2">
-                        <label for="media-input" class="block text-sm font-medium text-gray-700 mb-1">Bilder &amp; Videos</label>
-                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-500 transition cursor-pointer"
+                        <label for="media-input" class="block text-sm font-medium text-ivory-700 mb-1">Bilder &amp; Videos</label>
+                        <div class="border-2 border-dashed border-ivory-300 rounded-xl p-6 text-center hover:border-gold-400 transition-colors cursor-pointer bg-ivory-50/50"
                              onclick="document.getElementById('media-input').click()">
-                            <svg class="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-12 h-12 text-ivory-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
-                            <p class="text-gray-600">Klicken Sie hier oder ziehen Sie Bilder/Videos hierher</p>
-                            <p class="text-sm text-gray-400 mt-1">JPEG, PNG, WebP (max. 5MB) · MP4, MOV, WebM (max. 100MB)</p>
+                            <p class="text-ivory-600">Klicken Sie hier oder ziehen Sie Bilder/Videos hierher</p>
+                            <p class="text-sm text-ivory-400 mt-1">JPEG, PNG, WebP (max. 5MB) · MP4, MOV, WebM (max. 100MB)</p>
                             <input type="file" id="media-input" multiple accept="image/*,video/mp4,video/quicktime,video/webm" class="hidden"
                                    onchange="handleMediaInput(this)">
                             <input type="file" id="images" name="images[]" multiple class="hidden">
                             <input type="file" id="videos" name="videos[]" multiple class="hidden">
                             <div id="media-type-order"></div>
                         </div>
-                        <p class="text-sm text-gray-500 mt-3">Ziehen Sie die Medien in die gewünschte Reihenfolge. Das erste Bild wird als Titelbild verwendet.</p>
+                        <p class="text-sm text-ivory-500 mt-3">Ziehen Sie die Medien in die gewünschte Reihenfolge. Das erste Bild wird als Titelbild verwendet.</p>
                         <div id="media-preview" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4"></div>
                     </div>
                 </div>
 
-                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 sm:gap-4 pt-4 border-t">
+                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 sm:gap-4 pt-4 border-t border-ivory-200">
                     <a href="{{ route('admin.properties.index') }}"
-                       class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition text-center">
+                       class="px-6 py-3 border border-ivory-300 rounded-lg text-ivory-700 hover:bg-ivory-100 transition-colors text-center font-medium">
                         Abbrechen
                     </a>
                     <button type="submit"
-                            class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                            class="px-6 py-3 bg-gold-600 text-ivory-50 rounded-lg hover:bg-gold-700 transition-colors font-medium shadow-soft">
                         Immobilie erstellen
                     </button>
                 </div>
@@ -210,7 +210,7 @@
 
             selectedMedia.forEach((item, index) => {
                 const card = document.createElement('div');
-                card.className = 'relative rounded-lg border border-gray-200 bg-gray-50 p-2 cursor-move';
+                card.className = 'relative rounded-lg border border-ivory-200 bg-ivory-50 p-2 cursor-move';
                 card.draggable = true;
 
                 card.addEventListener('dragstart', () => {
@@ -244,7 +244,7 @@
                 }
 
                 const badge = document.createElement('span');
-                badge.className = 'absolute top-3 left-3 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded';
+                badge.className = 'absolute top-3 left-3 bg-gold-600 text-white text-xs font-semibold px-2 py-1 rounded';
                 badge.textContent = item.type === 'video' ? 'Video' : (index === firstImageIndex ? 'Titelbild' : 'Bild');
 
                 const controls = document.createElement('div');
@@ -252,7 +252,7 @@
 
                 const moveLeft = document.createElement('button');
                 moveLeft.type = 'button';
-                moveLeft.className = 'flex-1 px-2 py-1 text-sm border border-gray-300 rounded hover:bg-white disabled:opacity-40';
+                moveLeft.className = 'flex-1 px-2 py-1 text-sm border border-ivory-300 rounded hover:bg-white disabled:opacity-40';
                 moveLeft.textContent = '←';
                 moveLeft.title = 'Nach links verschieben';
                 moveLeft.disabled = index === 0;
@@ -260,7 +260,7 @@
 
                 const moveRight = document.createElement('button');
                 moveRight.type = 'button';
-                moveRight.className = 'flex-1 px-2 py-1 text-sm border border-gray-300 rounded hover:bg-white disabled:opacity-40';
+                moveRight.className = 'flex-1 px-2 py-1 text-sm border border-ivory-300 rounded hover:bg-white disabled:opacity-40';
                 moveRight.textContent = '→';
                 moveRight.title = 'Nach rechts verschieben';
                 moveRight.disabled = index === selectedMedia.length - 1;

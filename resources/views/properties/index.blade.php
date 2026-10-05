@@ -71,54 +71,57 @@ $breadcrumb = [
         $thousandSep = app()->getLocale() === 'de' ? '.' : ',';
     @endphp
     {{-- Hero --}}
-    <section class="bg-blue-600 text-white py-12 sm:py-16" aria-labelledby="hero-title">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 id="hero-title" class="text-3xl sm:text-4xl font-bold mb-4">{{ __('home.hero_title') }}</h1>
-            <p class="text-lg sm:text-xl text-blue-100">{{ __('home.hero_subtitle') }}</p>
+    <section class="relative overflow-hidden bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 text-ivory-50 py-20 sm:py-28" aria-labelledby="hero-title">
+        <div class="pointer-events-none absolute -top-32 right-[-6rem] w-[32rem] h-[32rem] rounded-full bg-gold-500/10 blur-3xl"></div>
+        <div class="pointer-events-none absolute -bottom-40 -left-24 w-[26rem] h-[26rem] rounded-full bg-navy-500/20 blur-3xl"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <span class="inline-block w-10 h-px bg-gold-400 mb-5"></span>
+            <h1 id="hero-title" class="font-serif text-3xl sm:text-5xl font-semibold mb-4 tracking-tight">{{ __('home.hero_title') }}</h1>
+            <p class="text-lg sm:text-xl text-ivory-300">{{ __('home.hero_subtitle') }}</p>
         </div>
     </section>
 
     {{-- Filter --}}
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
-        <form method="GET" action="{{ route('properties.index') }}" class="bg-white rounded-xl shadow-md p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <form method="GET" action="{{ route('properties.index') }}" class="bg-ivory-50 rounded-2xl shadow-lift border border-ivory-200 p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             @php $selectedLocations = (array) request('location', []); @endphp
             <div class="relative" x-data="{ open: false, selected: {{ Illuminate\Support\Js::from(array_values($selectedLocations)) }} }" @click.outside="open = false">
-                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('home.filter_location_label') }}</label>
+                <label class="block text-sm font-medium text-ivory-700 mb-1">{{ __('home.filter_location_label') }}</label>
                 <button type="button" @click="open = !open"
-                        class="w-full flex items-center justify-between gap-2 px-3 py-2 border border-gray-300 rounded-lg bg-white text-left focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <span class="truncate text-gray-700" x-text="selected.length ? selected.length + ' {{ __('home.filter_location_selected_suffix') }}' : '{{ __('home.filter_location_all') }}'"></span>
-                    <svg class="w-4 h-4 text-gray-400 flex-shrink-0 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="w-full flex items-center justify-between gap-2 px-3 py-2 border border-ivory-300 rounded-lg bg-white text-left focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none">
+                    <span class="truncate text-ivory-700" x-text="selected.length ? selected.length + ' {{ __('home.filter_location_selected_suffix') }}' : '{{ __('home.filter_location_all') }}'"></span>
+                    <svg class="w-4 h-4 text-ivory-400 flex-shrink-0 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                     </svg>
                 </button>
 
                 <div x-show="open" x-transition style="display: none;"
-                     class="absolute z-20 mt-1 w-full max-h-60 overflow-y-auto bg-white border border-gray-300 rounded-lg shadow-lg">
+                     class="absolute z-20 mt-1 w-full max-h-60 overflow-y-auto bg-white border border-ivory-300 rounded-lg shadow-lift">
                     @forelse($locations as $location)
-                        <label class="flex items-center gap-2 px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm text-gray-700">
+                        <label class="flex items-center gap-2 px-3 py-2 hover:bg-ivory-100 cursor-pointer text-sm text-ivory-700">
                             <input type="checkbox" name="location[]" value="{{ $location }}" x-model="selected"
-                                   class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
+                                   class="w-4 h-4 text-gold-600 border-ivory-300 rounded focus:ring-2 focus:ring-gold-400">
                             {{ $location }}
                         </label>
                     @empty
-                        <p class="px-3 py-2 text-sm text-gray-400">{{ __('home.filter_location_empty') }}</p>
+                        <p class="px-3 py-2 text-sm text-ivory-400">{{ __('home.filter_location_empty') }}</p>
                     @endforelse
                 </div>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('home.filter_price_label') }}</label>
+                <label class="block text-sm font-medium text-ivory-700 mb-1">{{ __('home.filter_price_label') }}</label>
                 <div class="flex gap-2">
                     <input type="number" name="price_min" value="{{ request('price_min') }}" placeholder="{{ __('home.filter_from') }}" min="0"
-                           class="w-1/2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                           class="w-1/2 px-3 py-2 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none">
                     <input type="number" name="price_max" value="{{ request('price_max') }}" placeholder="{{ __('home.filter_to') }}" min="0"
-                           class="w-1/2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                           class="w-1/2 px-3 py-2 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none">
                 </div>
             </div>
 
             <div>
-                <label for="bedrooms" class="block text-sm font-medium text-gray-700 mb-1">{{ __('home.filter_bedrooms_label') }}</label>
-                <select id="bedrooms" name="bedrooms" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <label for="bedrooms" class="block text-sm font-medium text-ivory-700 mb-1">{{ __('home.filter_bedrooms_label') }}</label>
+                <select id="bedrooms" name="bedrooms" class="w-full px-3 py-2 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none">
                     <option value="">{{ __('home.filter_any') }}</option>
                     @for($i = 1; $i <= 6; $i++)
                         <option value="{{ $i }}" {{ (string) request('bedrooms') === (string) $i ? 'selected' : '' }}>{{ $i }}+</option>
@@ -127,8 +130,8 @@ $breadcrumb = [
             </div>
 
             <div>
-                <label for="bathrooms" class="block text-sm font-medium text-gray-700 mb-1">{{ __('home.filter_bathrooms_label') }}</label>
-                <select id="bathrooms" name="bathrooms" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <label for="bathrooms" class="block text-sm font-medium text-ivory-700 mb-1">{{ __('home.filter_bathrooms_label') }}</label>
+                <select id="bathrooms" name="bathrooms" class="w-full px-3 py-2 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none">
                     <option value="">{{ __('home.filter_any') }}</option>
                     @for($i = 1; $i <= 4; $i++)
                         <option value="{{ $i }}" {{ (string) request('bathrooms') === (string) $i ? 'selected' : '' }}>{{ $i }}+</option>
@@ -137,29 +140,29 @@ $breadcrumb = [
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('home.filter_area_label') }}</label>
+                <label class="block text-sm font-medium text-ivory-700 mb-1">{{ __('home.filter_area_label') }}</label>
                 <div class="flex gap-2">
                     <input type="number" name="area_min" value="{{ request('area_min') }}" placeholder="{{ __('home.filter_from') }}" min="0"
-                           class="w-1/2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                           class="w-1/2 px-3 py-2 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none">
                     <input type="number" name="area_max" value="{{ request('area_max') }}" placeholder="{{ __('home.filter_to') }}" min="0"
-                           class="w-1/2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                           class="w-1/2 px-3 py-2 border border-ivory-300 rounded-lg bg-white focus:ring-2 focus:ring-gold-400 focus:border-gold-500 outline-none">
                 </div>
             </div>
 
             <div class="flex items-end">
                 <label class="flex items-center gap-2 cursor-pointer select-none py-2">
                     <input type="checkbox" name="parking" value="1" {{ request('parking') ? 'checked' : '' }}
-                           class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
-                    <span class="text-sm font-medium text-gray-700">{{ __('home.filter_parking_only') }}</span>
+                           class="w-5 h-5 text-gold-600 border-ivory-300 rounded focus:ring-2 focus:ring-gold-400">
+                    <span class="text-sm font-medium text-ivory-700">{{ __('home.filter_parking_only') }}</span>
                 </label>
             </div>
 
             <div class="lg:col-span-2 flex items-end justify-end gap-3">
-                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
+                <button type="submit" class="px-6 py-2.5 bg-gold-600 text-ivory-50 rounded-lg hover:bg-gold-700 transition-colors font-medium shadow-soft">
                     {{ __('home.filter_submit') }}
                 </button>
                 @if(request()->anyFilled(['location', 'price_min', 'price_max', 'bedrooms', 'bathrooms', 'area_min', 'area_max', 'parking']))
-                    <a href="{{ route('properties.index') }}" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                    <a href="{{ route('properties.index') }}" class="px-6 py-2.5 border border-ivory-300 rounded-lg text-ivory-700 hover:bg-ivory-100 transition-colors">
                         {{ __('home.filter_reset') }}
                     </a>
                 @endif
@@ -168,17 +171,17 @@ $breadcrumb = [
     </section>
 
     {{-- Angebotsliste --}}
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" aria-labelledby="listings-title">
-        <h2 id="listings-title" class="text-2xl font-bold text-gray-900 mb-8">{{ __('home.listings_heading', ['count' => $properties->total()]) }}</h2>
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16" aria-labelledby="listings-title">
+        <h2 id="listings-title" class="font-serif text-2xl sm:text-3xl font-semibold text-navy-900 mb-8">{{ __('home.listings_heading', ['count' => $properties->total()]) }}</h2>
 
         @if($properties->isEmpty())
-            <p class="text-gray-500 text-center py-12">{{ __('home.listings_empty') }}</p>
+            <p class="text-ivory-500 text-center py-12">{{ __('home.listings_empty') }}</p>
         @else
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 @foreach($properties as $property)
-                    <article class="group bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition" itemscope itemtype="https://schema.org/RealEstateListing">
+                    <article class="group bg-ivory-50 rounded-2xl shadow-soft border border-ivory-200 overflow-hidden hover:shadow-lift hover:-translate-y-1 transition-all duration-300" itemscope itemtype="https://schema.org/RealEstateListing">
                         <a href="{{ route('properties.show', $property) }}" class="block" itemprop="url">
-                            <div class="aspect-video bg-gray-200 overflow-hidden relative">
+                            <div class="aspect-video bg-ivory-200 overflow-hidden relative">
                                 @if($property->first_image)
                                     <img src="{{ $property->first_image }}"
                                          alt="{{ __('home.card_image_alt', ['title' => $property->localized_title, 'bedrooms' => $property->bedrooms, 'area' => $property->area, 'location' => $property->location]) }}"
@@ -186,12 +189,12 @@ $breadcrumb = [
                                          loading="lazy"
                                          itemprop="image">
                                     @if($property->images->count() > 1)
-                                        <span class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                                        <span class="absolute bottom-2 right-2 bg-navy-950/75 text-ivory-50 text-xs px-2 py-1 rounded">
                                             {{ __('home.card_photos_count', ['count' => $property->images->count()]) }}
                                         </span>
                                     @endif
                                 @else
-                                    <div class="w-full h-full flex items-center justify-center text-gray-400" aria-label="{{ __('home.card_no_image') }}">
+                                    <div class="w-full h-full flex items-center justify-center text-ivory-400" aria-label="{{ __('home.card_no_image') }}">
                                         <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 22V12h6v10"/>
@@ -200,17 +203,17 @@ $breadcrumb = [
                                 @endif
                             </div>
                             <div class="p-5">
-                                <h3 class="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition" itemprop="name">{{ $property->localized_title }}</h3>
-                                <p class="text-sm text-gray-500 mt-1" itemprop="address">{{ $property->location }}</p>
-                                <p class="text-xl font-bold text-blue-600 mt-3" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                                <h3 class="font-serif text-lg font-semibold text-navy-900 group-hover:text-gold-700 transition-colors" itemprop="name">{{ $property->localized_title }}</h3>
+                                <p class="text-sm text-ivory-500 mt-1" itemprop="address">{{ $property->location }}</p>
+                                <p class="text-xl font-bold text-gold-700 mt-3" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
                                     <span itemprop="price" content="{{ $property->price }}">{{ number_format($property->price, 2, $decimalSep, $thousandSep) }}</span>
                                     <span itemprop="priceCurrency" content="EUR">€</span>
-                                    <span class="text-sm font-medium text-gray-500">{{ __('home.card_per_person_night') }}</span>
+                                    <span class="text-sm font-medium text-ivory-500">{{ __('home.card_per_person_night') }}</span>
                                 </p>
-                                <div class="flex gap-4 mt-3 text-sm text-gray-500">
-                                    <span><strong>{{ $property->bedrooms }}</strong> {{ __('home.card_rooms') }}</span>
-                                    <span><strong>{{ $property->bathrooms }}</strong> {{ __('home.card_bath') }}</span>
-                                    <span><strong>{{ $property->area }}</strong> m²</span>
+                                <div class="flex gap-4 mt-3 text-sm text-ivory-500">
+                                    <span><strong class="text-ivory-700">{{ $property->bedrooms }}</strong> {{ __('home.card_rooms') }}</span>
+                                    <span><strong class="text-ivory-700">{{ $property->bathrooms }}</strong> {{ __('home.card_bath') }}</span>
+                                    <span><strong class="text-ivory-700">{{ $property->area }}</strong> m²</span>
                                 </div>
                             </div>
                         </a>
@@ -224,13 +227,13 @@ $breadcrumb = [
                     <div class="flex flex-wrap justify-center items-center gap-2">
                         {{-- Previous --}}
                         @if($properties->onFirstPage())
-                            <span class="px-4 py-2 text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">
+                            <span class="px-4 py-2 text-ivory-400 bg-ivory-100 rounded-lg cursor-not-allowed">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                 </svg>
                             </span>
                         @else
-                            <a href="{{ $properties->previousPageUrl() }}" class="px-4 py-2 text-gray-700 bg-white rounded-lg shadow hover:bg-blue-50 transition" aria-label="{{ __('home.pagination_prev') }}">
+                            <a href="{{ $properties->previousPageUrl() }}" class="px-4 py-2 text-ivory-700 bg-ivory-50 border border-ivory-200 rounded-lg shadow-soft hover:bg-gold-50 transition-colors" aria-label="{{ __('home.pagination_prev') }}">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                 </svg>
@@ -240,21 +243,21 @@ $breadcrumb = [
                         {{-- Page Numbers --}}
                         @foreach($properties->getUrlRange(1, $properties->lastPage()) as $page => $url)
                             @if($page == $properties->currentPage())
-                                <span class="px-4 py-2 text-white bg-blue-600 rounded-lg font-medium" aria-current="page">{{ $page }}</span>
+                                <span class="px-4 py-2 text-ivory-50 bg-gold-600 rounded-lg font-medium" aria-current="page">{{ $page }}</span>
                             @else
-                                <a href="{{ $url }}" class="px-4 py-2 text-gray-700 bg-white rounded-lg shadow hover:bg-blue-50 transition">{{ $page }}</a>
+                                <a href="{{ $url }}" class="px-4 py-2 text-ivory-700 bg-ivory-50 border border-ivory-200 rounded-lg shadow-soft hover:bg-gold-50 transition-colors">{{ $page }}</a>
                             @endif
                         @endforeach
 
                         {{-- Next --}}
                         @if($properties->hasMorePages())
-                            <a href="{{ $properties->nextPageUrl() }}" class="px-4 py-2 text-gray-700 bg-white rounded-lg shadow hover:bg-blue-50 transition" aria-label="{{ __('home.pagination_next') }}">
+                            <a href="{{ $properties->nextPageUrl() }}" class="px-4 py-2 text-ivory-700 bg-ivory-50 border border-ivory-200 rounded-lg shadow-soft hover:bg-gold-50 transition-colors" aria-label="{{ __('home.pagination_next') }}">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                 </svg>
                             </a>
                         @else
-                            <span class="px-4 py-2 text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">
+                            <span class="px-4 py-2 text-ivory-400 bg-ivory-100 rounded-lg cursor-not-allowed">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                 </svg>
@@ -263,7 +266,7 @@ $breadcrumb = [
                     </div>
                 </nav>
 
-                <p class="text-center text-sm text-gray-500 mt-4">
+                <p class="text-center text-sm text-ivory-500 mt-4">
                     {{ __('home.pagination_summary', ['current' => $properties->currentPage(), 'last' => $properties->lastPage(), 'total' => $properties->total()]) }}
                 </p>
             @endif
@@ -271,14 +274,14 @@ $breadcrumb = [
     </section>
 
     {{-- SEO Text Section --}}
-    <section class="bg-gray-100 py-12" aria-labelledby="seo-title">
+    <section class="bg-ivory-100 py-12 sm:py-16" aria-labelledby="seo-title">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 id="seo-title" class="text-2xl font-bold text-gray-900 mb-4">{{ __('home.seo_heading') }}</h2>
-            <div class="prose prose-gray max-w-none">
-                <p class="text-gray-600 leading-relaxed">
+            <h2 id="seo-title" class="font-serif text-2xl font-semibold text-ivory-900 mb-4">{{ __('home.seo_heading') }}</h2>
+            <div class="prose prose-neutral max-w-none">
+                <p class="text-ivory-700 leading-relaxed">
                     {!! __('home.seo_paragraph_1') !!}
                 </p>
-                <p class="text-gray-600 leading-relaxed mt-4">
+                <p class="text-ivory-700 leading-relaxed mt-4">
                     {{ __('home.seo_paragraph_2') }}
                 </p>
             </div>
